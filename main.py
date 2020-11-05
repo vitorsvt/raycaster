@@ -9,6 +9,7 @@ from pygame.locals import *
 FRAMERATE = 60
 WINDOW_SIZE = (640, 480)
 DISPLAY_SIZE = (640, 480)
+WINDOW_CENTER = (320, 240)
 
 def main():
     screen, display = setup_pg()
@@ -27,6 +28,7 @@ def main():
 
     while True:
         dt, last = update_time(last)
+        player.inputs['mouse'] = pg.mouse.get_rel()
 
         display.fill((50,50,50))
 
@@ -34,22 +36,6 @@ def main():
 
         player.move(level.map, dt)
         
-        # rot = player.rot * dt
-        # if keys['right']:
-        #     old_dx = player.dx
-        #     player.dx = player.dx * math.cos(-rot) - player.dy * math.sin(-rot)
-        #     player.dy = old_dx * math.sin(-rot) + player.dy * math.cos(-rot)
-        #     old_px = player.px
-        #     player.px = player.px * math.cos(-rot) - player.py * math.sin(-rot)
-        #     player.py = old_px * math.sin(-rot) + player.py * math.cos(-rot)
-        # if keys['left']:
-        #     old_dx = player.dx
-        #     player.dx = player.dx * math.cos(rot) - player.dy * math.sin(rot)
-        #     player.dy = old_dx * math.sin(rot) + player.dy * math.cos(rot)
-        #     old_px = player.px
-        #     player.px = player.px * math.cos(rot) - player.py * math.sin(rot)
-        #     player.py = old_px * math.sin(rot) + player.py * math.cos(rot)
-
         for e in pg.event.get():
             if e.type == QUIT:
                 pg.quit()
@@ -83,6 +69,10 @@ def setup_pg():
 
     screen = pg.display.set_mode(WINDOW_SIZE, 0, 32)
     display = pg.Surface(DISPLAY_SIZE)
+
+    pg.mouse.set_pos(WINDOW_CENTER)
+    pg.event.set_grab(True)
+    pg.mouse.set_visible(False)
 
     return screen, display
 

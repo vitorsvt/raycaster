@@ -1,4 +1,5 @@
 import pygame as pg
+import math
 
 class Player:
     def __init__(self, pos, direction, camera):
@@ -10,7 +11,8 @@ class Player:
         self.rot = 3.0
 
         self.inputs = {
-            'up': False, 'down': False, 'left': False, 'right': False
+            'up': False, 'down': False, 'left': False, 'right': False,
+            'mouse': [0,0]
         }
 
     def collide(self, tiles, delta):
@@ -45,3 +47,12 @@ class Player:
             new_y = self.y - self.dx * self.speed * dt
             if self.collide(tiles, (self.x, new_y)):
                 self.y = new_y
+        if self.inputs['mouse'][0] != 0:
+            rotation = -(self.inputs['mouse'][0]) * 0.08 * dt
+
+            old_dx = self.dx
+            self.dx = self.dx * math.cos(rotation) - self.dy * math.sin(rotation)
+            self.dy = old_dx * math.sin(rotation) + self.dy * math.cos(rotation)
+            old_px = self.px
+            self.px = self.px * math.cos(rotation) - self.py * math.sin(rotation)
+            self.py = old_px * math.sin(rotation) + self.py * math.cos(rotation)
