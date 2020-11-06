@@ -3,6 +3,8 @@ import sys, time, math
 
 from player import Player
 from level import Level
+from sprite import Sprite
+from entity import Enemy, Item, Scenario
 
 from pygame.locals import *
 
@@ -13,19 +15,44 @@ WINDOW_CENTER = (240, 160)
 
 def main():
     screen, display = setup_pg()
+
+    sprites = {}
+    sprites['pistol_idle'] = Sprite('pistol', [1], 5)
+    sprites['lamp'] = Sprite('lamp', [1])
+
+    player = Player((22,11.5), (-1,0), (0, 0.66))
     inputs = {
         'up': False,
         'down': False,
         'left': False,
         'right': False,
     }
+    textures = [
+            'walls/eagle.png',
+            'walls/redbrick.png',
+            'walls/purplestone.png',
+            'walls/greystone.png',
+            'walls/bluestone.png',
+            'walls/mossy.png',
+            'walls/wood.png',
+            'walls/colorstone.png'
+    ]
+    level = Level(
+        (24,24),
+        {'floor': (15,5,5), 'ceil': (35,5,5)}, 
+        [pg.image.load(i).convert_alpha() for i in textures],
+        sprites,
+        [
+            Scenario((20.5, 11.5), 'lamp')
+            # Sprite((20.5, 11.5), 8),
+            # Sprite((15.5, 11.5), 8),
+            # Sprite((10.5, 11.5), 8),
+            # Sprite((8.5, 11.5), 9)
+        ]
+    )
+
     clock = pg.time.Clock()
     last = time.time()
-
-    player = Player((22,11.5), (-1,0), (0, 0.66))
-    level = Level((24,24))
-    colors = [(0,0,0), (255,0,0), (0,255,0), (0,0,255), (255,0,255)]
-
     while True:
         dt, last = update_time(last)
         player.inputs['mouse'] = pg.mouse.get_rel()

@@ -2,28 +2,15 @@ import pygame as pg
 import math
 
 from tools import *
-from sprite import Sprite
 
 class Level:
-    def __init__(self, size):
+    def __init__(self, size, colors, textures, sprites, entities):
         self.width, self.height = size
         self.tex_width, self.tex_height = (64, 64)
-        self.floor_color = (15,5,5)
-        self.ceil_color = (35,5,5)
-        self.textures = []
-        images = [
-            'walls/eagle.png',
-            'walls/redbrick.png',
-            'walls/purplestone.png',
-            'walls/greystone.png',
-            'walls/bluestone.png',
-            'walls/mossy.png',
-            'walls/wood.png',
-            'walls/colorstone.png',
-            'walls/greenlight.png'
-        ]
-        for image in images:
-            self.textures.append(pg.image.load(image))
+        self.textures = textures
+        self.color = colors
+        self.entities = entities
+        self.sprites = sprites
         self.map = [
             [4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,7,7,7,7,7,7,7,7],
             [4,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,7,0,0,0,0,0,0,7],
@@ -50,12 +37,6 @@ class Level:
             [4,0,0,0,0,0,0,0,0,4,6,0,6,2,0,0,0,0,0,2,0,0,0,2],
             [4,4,4,4,4,4,4,4,4,4,1,1,1,2,2,2,2,2,2,3,3,3,3,3]
         ]
-        self.sprites = [
-            Sprite((20.5, 11.5), 8),
-            Sprite((15.5, 11.5), 8),
-            Sprite((10.5, 11.5), 8),
-            Sprite((5.5, 11.5), 8)
-        ]
         self.zbuffer = []
 
     def raycast(self, surface, player):
@@ -68,8 +49,8 @@ class Level:
         self.zbuffer = [0] * w
 
         # Cores do chão e do teto
-        surface.fill(self.floor_color, pg.Rect(0,h/2,w,h/2))
-        surface.fill(self.ceil_color, pg.Rect(0,0,w,h/2))
+        surface.fill(self.color['floor'], pg.Rect(0,h/2,w,h/2))
+        surface.fill(self.color['ceil'], pg.Rect(0,0,w,h/2))
 
         for x in range(w):
             camera_x = 2 * x / w - 1
@@ -173,23 +154,30 @@ class Level:
                 tex_height
             ), (1, draw_height))
 
+            # Sombra
+            if horizontal:
+                shadow = pg.Surface(vline.get_size())
+                shadow.set_alpha(150)
+                vline.blit(shadow, (0, 0))
+
             # Blit da linha vertical na surface
             surface.blit(
                 vline,
                 (x, draw_start)
             )
 
+
     def spritecast(self, surface, player):
         w, h = surface.get_size() # Dimensões da tela
 
-        for sprite in self.sprites:
-            sprite.distance = basic_distance((sprite.x, sprite.y), (player.x, player.y))
+        for e in self.entities:
+            e.distance = basic_distance((e.x, e.y), (player.x, player.y))
 
-        self.sprites.sort(key=lambda x: x.distance, reverse=True)
+        self.entities.sort(key=lambda e: e.distance, reverse=True)
 
-        for sprite in self.sprites:
-            sprite_x = sprite.x - player.x
-            sprite_y = sprite.y - player.y
+        for entity in self.entities:
+            sprite_x = entity.x - player.x
+            sprite_y = entity.y - player.y
 
             inv_det = 1 / (player.px * player.dy - player.dx * player.py)
 
@@ -209,6 +197,7 @@ class Level:
             draw_start_x = int(-sprite_width/2 + sprite_screen_x)
             draw_end_x = int(sprite_width/2 + sprite_screen_x)
             
+            sprite, entity.frame = self.sprites[entity.get_sprite()].next(entity.frame)
 
             for stripe in range(draw_start_x, draw_end_x):
                 if (transform_y > 0 and stripe > 0 and stripe < w and transform_y < self.zbuffer[stripe]):
@@ -217,7 +206,7 @@ class Level:
                     )
                     tex_y = ((draw_end_y - 1) - h/2 + sprite_height/2) * self.tex_height / sprite_height
                     vline = pg.transform.scale(clip(
-                        self.textures[sprite.texture],
+                        sprite,
                         tex_x,
                         0,
                         1,
@@ -226,6 +215,5 @@ class Level:
 
                     surface.blit(
                         vline,
-                        # (stripe,0)
                         (stripe, draw_start_y)
                     )
