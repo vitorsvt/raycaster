@@ -18,6 +18,7 @@ def main():
 
     sprites = {}
     sprites['pistol_idle'] = Sprite('pistol', [1], 5)
+    sprites['pistol_shoot'] = Sprite('pistol', [5]*5, 5)
     sprites['lamp'] = Sprite('lamp', [1])
 
     player = Player((22,11.5), (-1,0), (0, 0.66))
@@ -59,6 +60,7 @@ def main():
 
         level.raycast(display, player)
         level.spritecast(display, player)
+        player.draw_weapon(display, sprites)
         player.move(level.map, dt)
         
         for e in pg.event.get():

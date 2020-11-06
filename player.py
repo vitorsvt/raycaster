@@ -10,6 +10,10 @@ class Player:
         self.speed = 5.0
         self.rot = 3.0
 
+        self.weapon_frame = 0
+        self.weapon = 'pistol'
+        self.state = 'shoot'
+
         self.inputs = {
             'up': False, 'down': False, 'left': False, 'right': False,
             'mouse': [0,0]
@@ -56,3 +60,10 @@ class Player:
             old_px = self.px
             self.px = self.px * math.cos(rotation) - self.py * math.sin(rotation)
             self.py = old_px * math.sin(rotation) + self.py * math.cos(rotation)
+
+    def draw_weapon(self, surface, sprites):
+        dw, dh = surface.get_size()
+        sprite, self.weapon_frame = sprites[self.weapon+"_"+self.state].next(self.weapon_frame)
+        sw, sh = sprite.get_size()
+
+        surface.blit(sprite, ((dw - sw)/2, dh - sh))
