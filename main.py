@@ -20,14 +20,9 @@ def main():
     sprites['pistol_idle'] = Sprite('pistol', [1], 5)
     sprites['pistol_shoot'] = Sprite('pistol', [5]*5, 5)
     sprites['lamp'] = Sprite('lamp', [1])
+    sprites['soldier'] = Sprite('soldier', [1])
 
     player = Player((22,11.5), (-1,0), (0, 0.66))
-    inputs = {
-        'up': False,
-        'down': False,
-        'left': False,
-        'right': False,
-    }
     textures = [
             'walls/eagle.png',
             'walls/redbrick.png',
@@ -44,7 +39,8 @@ def main():
         [pg.image.load(i).convert_alpha() for i in textures],
         sprites,
         [
-            Scenario((20.5, 11.5), 'lamp')
+            # Scenario((20.5, 11.5), 'lamp'),
+            Enemy((20.5, 11.5), 'soldier')
             # Sprite((20.5, 11.5), 8),
             # Sprite((15.5, 11.5), 8),
             # Sprite((10.5, 11.5), 8),
@@ -61,7 +57,9 @@ def main():
         level.raycast(display, player)
         level.spritecast(display, player)
         player.draw_weapon(display, sprites)
-        player.move(level.map, dt)
+
+        player.move(level.map, level.middle, dt)
+        player.update()
         
         for e in pg.event.get():
             if e.type == QUIT:
@@ -80,12 +78,15 @@ def main():
                 if e.key == K_s: player.inputs['down'] = False
                 if e.key == K_a: player.inputs['left'] = False
                 if e.key == K_d: player.inputs['right'] = False
+            if e.type == MOUSEBUTTONDOWN:
+                player.inputs['lmb'] = True
+            if e.type == MOUSEBUTTONUP:
+                player.inputs['lmb'] = False
 
         screen.blit(pg.transform.scale(display, WINDOW_SIZE), (0, 0))
 
         pg.display.update()
         clock.tick(FRAMERATE)
-
 
 def update_time(last):
     dt = (time.time() - last)

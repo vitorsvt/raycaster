@@ -10,19 +10,27 @@ class Player:
         self.speed = 5.0
         self.rot = 3.0
 
+        self.shoot_delay = 0
+
         self.weapon_frame = 0
         self.weapon = 'pistol'
-        self.state = 'shoot'
+        self.state = 'idle'
 
         self.inputs = {
             'up': False, 'down': False, 'left': False, 'right': False,
-            'mouse': [0,0]
+            'mouse': [0,0], 'lmb': False, 'rmb': False
         }
+
+    def update(self):
+        if self.shoot_delay == 0 and self.state == 'shoot':
+            self.state = 'idle'
+        elif self.shoot_delay > 0:
+            self.shoot_delay -= 1
 
     def collide(self, tiles, delta):
         return tiles[int(delta[0])][int(delta[1])] == 0
 
-    def move(self, tiles, dt):
+    def move(self, tiles, middle, dt):
         if self.inputs['up']:
             new_x = self.x + self.dx * self.speed * dt
             if self.collide(tiles, (new_x, self.y)):
@@ -60,6 +68,15 @@ class Player:
             old_px = self.px
             self.px = self.px * math.cos(rotation) - self.py * math.sin(rotation)
             self.py = old_px * math.sin(rotation) + self.py * math.cos(rotation)
+        if self.inputs['lmb']:
+            self.shoot(middle)
+
+    def shoot(self, target):
+        if self.shoot_delay == 0:
+            if target != None:
+                print('SHOT')
+            self.shoot_delay = 25
+            self.state = 'shoot'
 
     def draw_weapon(self, surface, sprites):
         dw, dh = surface.get_size()

@@ -7,6 +7,7 @@ class Level:
     def __init__(self, size, colors, textures, sprites, entities):
         self.width, self.height = size
         self.tex_width, self.tex_height = (64, 64)
+        self.middle = None
         self.textures = textures
         self.color = colors
         self.entities = entities
@@ -166,9 +167,9 @@ class Level:
                 (x, draw_start)
             )
 
-
     def spritecast(self, surface, player):
         w, h = surface.get_size() # Dimensões da tela
+        self.middle = None
 
         for e in self.entities:
             e.distance = basic_distance((e.x, e.y), (player.x, player.y))
@@ -176,6 +177,9 @@ class Level:
         self.entities.sort(key=lambda e: e.distance, reverse=True)
 
         for entity in self.entities:
+            sprite, entity.frame = self.sprites[entity.get_sprite()].next(entity.frame)
+            tex_width, tex_height = sprite.get_size()
+
             sprite_x = entity.x - player.x
             sprite_y = entity.y - player.y
 
@@ -187,24 +191,24 @@ class Level:
             sprite_screen_x = int((w/2) * (1 + transform_x / transform_y))
 
             sprite_height = abs(int(h / transform_y))
-            if sprite_height > 2000: sprite_height = 2000
+            if sprite_height > 1000: sprite_height = 1000
 
             draw_start_y = int(-sprite_height/2 + h/2)
             draw_end_y = int(sprite_height/2 + h/2)
 
             sprite_width = abs(int(h / transform_y))
-
             draw_start_x = int(-sprite_width/2 + sprite_screen_x)
             draw_end_x = int(sprite_width/2 + sprite_screen_x)
             
-            sprite, entity.frame = self.sprites[entity.get_sprite()].next(entity.frame)
+            if draw_start_x < w/2 < draw_end_x and 0 < transform_y < self.zbuffer[int(w/2)]:
+                self.middle = entity
 
             for stripe in range(draw_start_x, draw_end_x):
                 if (transform_y > 0 and stripe > 0 and stripe < w and transform_y < self.zbuffer[stripe]):
                     tex_x = int(
-                        (stripe - (-sprite_width / 2 + sprite_screen_x)) * self.tex_width / sprite_width
+                        (stripe - (-sprite_width / 2 + sprite_screen_x)) * tex_width / sprite_width
                     )
-                    tex_y = ((draw_end_y - 1) - h/2 + sprite_height/2) * self.tex_height / sprite_height
+                    tex_y = ((draw_end_y - 1) - h/2 + sprite_height/2) * tex_height / sprite_height
                     vline = pg.transform.scale(clip(
                         sprite,
                         tex_x,
