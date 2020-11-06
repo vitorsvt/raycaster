@@ -22,7 +22,7 @@ def main():
     clock = pg.time.Clock()
     last = time.time()
 
-    player = Player((22,12), (-1,0), (0, 0.66))
+    player = Player((22,11.5), (-1,0), (0, 0.66))
     level = Level((24,24))
     colors = [(0,0,0), (255,0,0), (0,255,0), (0,0,255), (255,0,255)]
 
@@ -30,10 +30,9 @@ def main():
         dt, last = update_time(last)
         player.inputs['mouse'] = pg.mouse.get_rel()
 
-        display.fill((50,50,50))
+        display.fill((0,0,0))
 
         level.raycast(display, player)
-
         player.move(level.map, dt)
         
         for e in pg.event.get():
@@ -54,10 +53,11 @@ def main():
                 if e.key == K_a: player.inputs['left'] = False
                 if e.key == K_d: player.inputs['right'] = False
 
-        screen.blit(display, (0, 0))
+        screen.blit(pg.transform.scale(display, WINDOW_SIZE), (0, 0))
 
         pg.display.update()
         clock.tick(FRAMERATE)
+
 
 def update_time(last):
     dt = (time.time() - last)
