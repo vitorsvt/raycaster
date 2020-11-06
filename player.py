@@ -27,24 +27,24 @@ class Player:
             if self.collide(tiles, (self.x, new_y)):
                 self.y = new_y
         if self.inputs['down']:
-            new_x = self.x - self.dx * self.speed * dt
+            new_x = self.x - self.dx * self.speed * dt / 2
             if self.collide(tiles, (new_x, self.y)):
                 self.x = new_x
-            new_y = self.y - self.dy * self.speed * dt
+            new_y = self.y - self.dy * self.speed * dt / 2
             if self.collide(tiles, (self.x, new_y)):
                 self.y = new_y
         if self.inputs['left']:
-            new_x = self.x - self.dy * self.speed * dt
+            new_x = self.x - self.dy * self.speed * dt / 2
             if self.collide(tiles, (new_x, self.y)):
                 self.x = new_x
-            new_y = self.y + self.dx * self.speed * dt
+            new_y = self.y + self.dx * self.speed * dt / 2
             if self.collide(tiles, (self.x, new_y)):
                 self.y = new_y
         if self.inputs['right']:
-            new_x = self.x + self.dy * self.speed * dt
+            new_x = self.x + self.dy * self.speed * dt / 2
             if self.collide(tiles, (new_x, self.y)):
                 self.x = new_x
-            new_y = self.y - self.dx * self.speed * dt
+            new_y = self.y - self.dx * self.speed * dt / 2
             if self.collide(tiles, (self.x, new_y)):
                 self.y = new_y
         if self.inputs['mouse'][0] != 0:

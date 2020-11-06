@@ -7,9 +7,9 @@ from level import Level
 from pygame.locals import *
 
 FRAMERATE = 60
-WINDOW_SIZE = (640, 480)
-DISPLAY_SIZE = (640, 480)
-WINDOW_CENTER = (320, 240)
+WINDOW_SIZE = (480, 320)
+DISPLAY_SIZE = (480, 320)
+WINDOW_CENTER = (240, 160)
 
 def main():
     screen, display = setup_pg()
@@ -30,9 +30,8 @@ def main():
         dt, last = update_time(last)
         player.inputs['mouse'] = pg.mouse.get_rel()
 
-        display.fill((0,0,0))
-
         level.raycast(display, player)
+        level.spritecast(display, player)
         player.move(level.map, dt)
         
         for e in pg.event.get():

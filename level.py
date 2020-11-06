@@ -2,18 +2,14 @@ import pygame as pg
 import math
 
 from tools import *
+from sprite import Sprite
 
 class Level:
     def __init__(self, size):
         self.width, self.height = size
-
         self.tex_width, self.tex_height = (64, 64)
-
-        self.colors = [
-            (0,0,0), (255,0,0), (0,255,0), (0,0,255), (255,0,255),
-            (0,255,255), (255,0,255),(255,255,0), (255,255,255)
-        ]
-
+        self.floor_color = (15,5,5)
+        self.ceil_color = (35,5,5)
         self.textures = []
         images = [
             'walls/eagle.png',
@@ -23,7 +19,8 @@ class Level:
             'walls/bluestone.png',
             'walls/mossy.png',
             'walls/wood.png',
-            'walls/colorstone.png'
+            'walls/colorstone.png',
+            'walls/greenlight.png'
         ]
         for image in images:
             self.textures.append(pg.image.load(image))
@@ -53,6 +50,13 @@ class Level:
             [4,0,0,0,0,0,0,0,0,4,6,0,6,2,0,0,0,0,0,2,0,0,0,2],
             [4,4,4,4,4,4,4,4,4,4,1,1,1,2,2,2,2,2,2,3,3,3,3,3]
         ]
+        self.sprites = [
+            Sprite((20.5, 11.5), 8),
+            Sprite((15.5, 11.5), 8),
+            Sprite((10.5, 11.5), 8),
+            Sprite((5.5, 11.5), 8)
+        ]
+        self.zbuffer = []
 
     def raycast(self, surface, player):
         """
@@ -60,6 +64,12 @@ class Level:
         https://lodev.org/cgtutor/raycasting.html
         """
         w, h = surface.get_size() # Dimensões da tela
+
+        self.zbuffer = [0] * w
+
+        # Cores do chão e do teto
+        surface.fill(self.floor_color, pg.Rect(0,h/2,w,h/2))
+        surface.fill(self.ceil_color, pg.Rect(0,0,w,h/2))
 
         for x in range(w):
             camera_x = 2 * x / w - 1
@@ -114,12 +124,13 @@ class Level:
                 distance = (map_x - player.x + (1 - step_x) / 2) / ray_dx
             else:
                 distance = (map_y - player.y + (1 - step_y) / 2) / ray_dy
+            distance += 0.1
 
-            distance += 0.01
+            self.zbuffer[x] = distance
 
             line_height = int(h / distance)
 
-            if line_height > 2500: line_height = 2500
+            if line_height > 2000: line_height = 2000
 
             # Definimos o começo e fim da parede (y)
             draw_start = -line_height/2 + h/2
@@ -167,3 +178,54 @@ class Level:
                 vline,
                 (x, draw_start)
             )
+
+    def spritecast(self, surface, player):
+        w, h = surface.get_size() # Dimensões da tela
+
+        for sprite in self.sprites:
+            sprite.distance = basic_distance((sprite.x, sprite.y), (player.x, player.y))
+
+        self.sprites.sort(key=lambda x: x.distance, reverse=True)
+
+        for sprite in self.sprites:
+            sprite_x = sprite.x - player.x
+            sprite_y = sprite.y - player.y
+
+            inv_det = 1 / (player.px * player.dy - player.dx * player.py)
+
+            transform_x = inv_det * (player.dy * sprite_x - player.dx * sprite_y)
+            transform_y = inv_det * (-player.py * sprite_x + player.px * sprite_y)
+
+            sprite_screen_x = int((w/2) * (1 + transform_x / transform_y))
+
+            sprite_height = abs(int(h / transform_y))
+            if sprite_height > 2000: sprite_height = 2000
+
+            draw_start_y = int(-sprite_height/2 + h/2)
+            draw_end_y = int(sprite_height/2 + h/2)
+
+            sprite_width = abs(int(h / transform_y))
+
+            draw_start_x = int(-sprite_width/2 + sprite_screen_x)
+            draw_end_x = int(sprite_width/2 + sprite_screen_x)
+            
+
+            for stripe in range(draw_start_x, draw_end_x):
+                if (transform_y > 0 and stripe > 0 and stripe < w and transform_y < self.zbuffer[stripe]):
+                    tex_x = int(
+                        (stripe - (-sprite_width / 2 + sprite_screen_x)) * self.tex_width / sprite_width
+                    )
+                    tex_y = ((draw_end_y - 1) - h/2 + sprite_height/2) * self.tex_height / sprite_height
+                    vline = pg.transform.scale(clip(
+                        self.textures[sprite.texture],
+                        tex_x,
+                        0,
+                        1,
+                        tex_y
+                    ), (1, draw_end_y - draw_start_y))
+
+                    surface.blit(
+                        vline,
+                        # (stripe,0)
+                        (stripe, draw_start_y)
+                    )
