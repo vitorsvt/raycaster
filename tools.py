@@ -10,3 +10,6 @@ def clip(surface, x, y, w, h):
 
 def basic_distance(a, b):
     return (a[0] - b[0])**2 + (a[1] - b[1])**2
+
+def distance(a, b):
+    return math.sqrt((a[0] - b[0])**2 + (a[1] - b[1])**2)

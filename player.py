@@ -7,6 +7,7 @@ class Player:
         self.dx, self.dy = direction
         self.px, self.py = camera
 
+        self.health = 100
         self.speed = 5.0
         self.rot = 3.0
 
@@ -71,9 +72,13 @@ class Player:
         if self.inputs['lmb']:
             self.shoot(middle)
 
+    def damage(self, damage):
+        self.health -= damage
+
     def shoot(self, target):
         if self.shoot_delay == 0:
             if target != None:
+                target.damage(50)
                 print('SHOT')
             self.shoot_delay = 25
             self.state = 'shoot'

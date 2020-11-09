@@ -40,6 +40,13 @@ class Level:
         ]
         self.zbuffer = []
 
+    def update(self, player, dt):
+        for entity in self.entities:
+            if entity.dead:
+                self.entities.remove(entity)
+            else:
+                entity.update(self.map, player, dt)
+
     def raycast(self, surface, player):
         """
         Algoritmo de raycast (e a aplicação em C++) foi retirado do site:

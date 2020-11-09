@@ -20,7 +20,12 @@ def main():
     sprites['pistol_idle'] = Sprite('pistol', [1], 5)
     sprites['pistol_shoot'] = Sprite('pistol', [5]*5, 5)
     sprites['lamp'] = Sprite('lamp', [1])
-    sprites['soldier'] = Sprite('soldier', [1])
+    sprites['zombie_idle'] = Sprite('assets/zombie_idle', [1])
+    sprites['zombie_run'] = Sprite('assets/zombie_run', [5]*4)
+    sprites['zombie_attack'] = Sprite('assets/zombie_attack', [2,2,2,2,2,2])
+    sprites['zombie_shot_1'] = Sprite('assets/zombie_shot_1', [10])
+    sprites['zombie_shot_2'] = Sprite('assets/zombie_shot_2', [10])
+    sprites['zombie_die'] = Sprite('assets/zombie_die', [5]*4 + [60])
 
     player = Player((22,11.5), (-1,0), (0, 0.66))
     textures = [
@@ -40,7 +45,7 @@ def main():
         sprites,
         [
             # Scenario((20.5, 11.5), 'lamp'),
-            Enemy((20.5, 11.5), 'soldier')
+            Enemy((20.5, 11.5), 'zombie')
             # Sprite((20.5, 11.5), 8),
             # Sprite((15.5, 11.5), 8),
             # Sprite((10.5, 11.5), 8),
@@ -60,6 +65,8 @@ def main():
 
         player.move(level.map, level.middle, dt)
         player.update()
+
+        level.update(player, dt)
         
         for e in pg.event.get():
             if e.type == QUIT:
