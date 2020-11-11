@@ -27,20 +27,22 @@ class Scenario(Entity):
 class Enemy(Entity):
     def __init__(self, pos, name):
         Entity.__init__(self, pos, name, 'idle')
-        self.new_x, self.new_y = pos
 
         self.health = 100
         self.speed = 1.5
-        self.attack_delay = 0
-        self.shot_delay = 0
-        self.death_delay = 0
-        self.dead = False
+        self.delay = {
+            'attack': 0,
+            'damage': 0,
+            'die': 0
+        }
 
+        # Propriedades de movimentação
+        self.new_x, self.new_y = pos
         self.angle = 0
         self.dx = math.cos(self.angle)
         self.dy = math.sin(self.angle)
-
-        self.rand_x, self.rand_y = (random.uniform(-0.5, 0.5), random.uniform(-0.5, 0.5))
+        self.rand_x = random.uniform(-0.5, 0.5)
+        self.rand_y = random.uniform(-0.5, 0.5)
         self.step = 0
 
     def collide(self, tiles, delta):
@@ -51,39 +53,38 @@ class Enemy(Entity):
         if self.health > 0:
             sprite_number = random.randint(1, 2)
             self.change_state('shot_' + str(sprite_number))
-            self.shot_delay = 10
+            self.delay['damage'] = 10
         elif self.state != 'die':
-            self.change_state('die')
-            self.death_delay = 80
+            self.change_state('die', 80)
 
     def attack(self, player):
-        if self.attack_delay == 0:
+        if self.delay['attack'] == 0:
             player.damage(10)
-            self.attack_delay = 36
-            self.state = 'attack'
+            self.change_state('attack', 36)
             self.frame = 0
-        elif self.attack_delay <= 24:
+        elif self.delay['attack'] <= 24:
             self.state = 'idle'
             self.frame = 0
 
-    def change_state(self, new):
+    def change_state(self, new, delay = 0):
         if self.state != new:
             self.frame = 0
+        if delay != 0:
+            self.delay[new] = delay
         self.state = new
 
     def update(self, tiles, player, dt):
         self.angle = math.atan2(player.y - self.y, player.x - self.x)
         d = basic_distance((player.x, player.y),(self.x, self.y))
 
-        if self.attack_delay > 0:
-            self.attack_delay -= 1
+        # Update delay
+        if self.delay['attack'] > 0:
+            self.delay['attack'] -= 1
 
-        if self.death_delay > 1:
-            self.death_delay -= 1
-        elif self.death_delay == 1:
-            self.dead = True
-        elif self.shot_delay > 0:
-            self.shot_delay -= 1
+        if self.delay['die'] > 0:
+            self.delay['die'] -= 1
+        elif self.delay['damage'] > 0:
+            self.delay['damage'] -= 1
         elif d > 0.5:
             self.change_state('run')
 

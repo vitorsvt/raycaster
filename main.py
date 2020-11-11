@@ -20,6 +20,7 @@ def main():
     sprites['pistol_idle'] = Sprite('pistol', [1], 5)
     sprites['pistol_shoot'] = Sprite('pistol', [5]*5, 5)
     sprites['lamp'] = Sprite('lamp', [1])
+
     sprites['zombie_idle'] = Sprite('assets/zombie_idle', [1])
     sprites['zombie_run'] = Sprite('assets/zombie_run', [5]*4)
     sprites['zombie_attack'] = Sprite('assets/zombie_attack', [2,2,2,2,2,2])
@@ -44,12 +45,10 @@ def main():
         [pg.image.load(i).convert_alpha() for i in textures],
         sprites,
         [
-            # Scenario((20.5, 11.5), 'lamp'),
-            Enemy((20.5, 11.5), 'zombie')
-            # Sprite((20.5, 11.5), 8),
-            # Sprite((15.5, 11.5), 8),
-            # Sprite((10.5, 11.5), 8),
-            # Sprite((8.5, 11.5), 9)
+            Enemy((20.5, 11.5), 'zombie'),
+            # Enemy((10.5, 11.5), 'zombie'),
+            # Enemy((10.5, 10.5), 'zombie'),
+            # Enemy((10.5, 9.5), 'zombie')
         ]
     )
 

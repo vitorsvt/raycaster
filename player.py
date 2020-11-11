@@ -1,6 +1,8 @@
 import pygame as pg
 import math
 
+from tools import wrap_angle
+
 class Player:
     def __init__(self, pos, direction, camera):
         self.x, self.y = pos
@@ -10,6 +12,12 @@ class Player:
         self.health = 100
         self.speed = 5.0
         self.rot = 3.0
+        self.moving = False
+
+        self.offx = 0
+        self.offx_inc = 1
+        self.offy = 0
+        self.offy_inc = 1
 
         self.shoot_delay = 0
 
@@ -23,6 +31,24 @@ class Player:
         }
 
     def update(self):
+        if self.moving:
+            self.offx += self.offx_inc
+            if self.offx > 10 or self.offx < -10:
+                self.offx_inc = -self.offx_inc
+            
+            self.offy += self.offy_inc
+            if self.offy > 5 or self.offy < -5:
+                self.offy_inc = -self.offy_inc
+        else:
+            if self.offx > 0:
+                self.offx -= abs(self.offx_inc)
+            elif self.offx < 0:
+                self.offx += abs(self.offx_inc)
+
+            if self.offy > 0:
+                self.offy -= abs(self.offy_inc)
+            elif self.offy < 0:
+                self.offy += abs(self.offy_inc)
         if self.shoot_delay == 0 and self.state == 'shoot':
             self.state = 'idle'
         elif self.shoot_delay > 0:
@@ -32,7 +58,9 @@ class Player:
         return tiles[int(delta[0])][int(delta[1])] == 0
 
     def move(self, tiles, middle, dt):
+        self.moving = False
         if self.inputs['up']:
+            self.moving = True
             new_x = self.x + self.dx * self.speed * dt
             if self.collide(tiles, (new_x, self.y)):
                 self.x = new_x
@@ -40,6 +68,7 @@ class Player:
             if self.collide(tiles, (self.x, new_y)):
                 self.y = new_y
         if self.inputs['down']:
+            self.moving = True
             new_x = self.x - self.dx * self.speed * dt / 2
             if self.collide(tiles, (new_x, self.y)):
                 self.x = new_x
@@ -47,6 +76,7 @@ class Player:
             if self.collide(tiles, (self.x, new_y)):
                 self.y = new_y
         if self.inputs['left']:
+            self.moving = True
             new_x = self.x - self.dy * self.speed * dt / 2
             if self.collide(tiles, (new_x, self.y)):
                 self.x = new_x
@@ -54,6 +84,7 @@ class Player:
             if self.collide(tiles, (self.x, new_y)):
                 self.y = new_y
         if self.inputs['right']:
+            self.moving = True
             new_x = self.x + self.dy * self.speed * dt / 2
             if self.collide(tiles, (new_x, self.y)):
                 self.x = new_x
@@ -77,7 +108,7 @@ class Player:
 
     def shoot(self, target):
         if self.shoot_delay == 0:
-            if target != None:
+            if target != None and target.health > 0:
                 target.damage(50)
                 print('SHOT')
             self.shoot_delay = 25
@@ -88,4 +119,10 @@ class Player:
         sprite, self.weapon_frame = sprites[self.weapon+"_"+self.state].next(self.weapon_frame)
         sw, sh = sprite.get_size()
 
-        surface.blit(sprite, ((dw - sw)/2, dh - sh))
+        surface.blit(
+            sprite,
+            (
+                (dw - sw)/2 + self.offx,
+                dh - sh + self.offy + 6
+            )
+        )        

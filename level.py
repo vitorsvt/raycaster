@@ -42,7 +42,7 @@ class Level:
 
     def update(self, player, dt):
         for entity in self.entities:
-            if entity.dead:
+            if entity.health <= 0 and entity.delay['die'] == 0:
                 self.entities.remove(entity)
             else:
                 entity.update(self.map, player, dt)
@@ -198,7 +198,7 @@ class Level:
             sprite_screen_x = int((w/2) * (1 + transform_x / transform_y))
 
             sprite_height = abs(int(h / transform_y))
-            if sprite_height > 1000: sprite_height = 1000
+            if sprite_height > 500: sprite_height = 500
 
             draw_start_y = int(-sprite_height/2 + h/2)
             draw_end_y = int(sprite_height/2 + h/2)
@@ -216,13 +216,14 @@ class Level:
                         (stripe - (-sprite_width / 2 + sprite_screen_x)) * tex_width / sprite_width
                     )
                     tex_y = ((draw_end_y - 1) - h/2 + sprite_height/2) * tex_height / sprite_height
+
                     vline = pg.transform.scale(clip(
                         sprite,
                         tex_x,
                         0,
                         1,
                         tex_y
-                    ), (1, draw_end_y - draw_start_y))
+                    ), (1, sprite_height))
 
                     surface.blit(
                         vline,
