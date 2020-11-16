@@ -207,7 +207,7 @@ class Level:
             draw_start_x = int(-sprite_width/2 + sprite_screen_x)
             draw_end_x = int(sprite_width/2 + sprite_screen_x)
             
-            if draw_start_x < w/2 < draw_end_x and 0 < transform_y < self.zbuffer[int(w/2)]:
+            if draw_start_x < w/2 < draw_end_x and 0 < transform_y < self.zbuffer[int(w/2)] and entity.health > 0:
                 self.middle = entity
 
             for stripe in range(draw_start_x, draw_end_x):

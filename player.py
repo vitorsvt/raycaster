@@ -110,7 +110,6 @@ class Player:
         if self.shoot_delay == 0:
             if target != None and target.health > 0:
                 target.damage(50)
-                print('SHOT')
             self.shoot_delay = 25
             self.state = 'shoot'
 

@@ -44,6 +44,7 @@ class Enemy(Entity):
         self.rand_x = random.uniform(-0.5, 0.5)
         self.rand_y = random.uniform(-0.5, 0.5)
         self.step = 0
+        self.distance = 0
 
     def collide(self, tiles, delta):
         return tiles[int(delta[0])][int(delta[1])] == 0
@@ -75,7 +76,7 @@ class Enemy(Entity):
 
     def update(self, tiles, player, dt):
         self.angle = math.atan2(player.y - self.y, player.x - self.x)
-        d = basic_distance((player.x, player.y),(self.x, self.y))
+        # d = basic_distance((player.x, player.y),(self.x, self.y))
 
         # Update delay
         if self.delay['attack'] > 0:
@@ -85,8 +86,7 @@ class Enemy(Entity):
             self.delay['die'] -= 1
         elif self.delay['damage'] > 0:
             self.delay['damage'] -= 1
-        elif d > 0.5:
-            self.change_state('run')
+        else:
 
             if self.step > 9:
                 self.step = 0
@@ -98,12 +98,19 @@ class Enemy(Entity):
             self.dx = math.cos(self.angle) + self.rand_x
             self.dy = math.sin(self.angle) + self.rand_y
 
-            new_x = self.x + self.dx * dt * self.speed
-            new_y = self.y + self.dy * dt * self.speed
+            if self.distance >= 1.0:
+                self.change_state('run')
+                new_x = self.x + self.dx * dt * self.speed
+                new_y = self.y + self.dy * dt * self.speed
+            else:
+                self.attack(player)
+                if self.distance <= 0.5:
+                    new_x = self.x - self.dx * dt * self.speed
+                    new_y = self.y - self.dy * dt * self.speed
+                else:
+                    new_x = new_y = 0
 
             if self.collide(tiles, (new_x, self.y)):
                 self.x = new_x
             if self.collide(tiles, (self.x, new_y)):
                 self.y = new_y
-        elif d <= 0.5:
-            self.attack(player)

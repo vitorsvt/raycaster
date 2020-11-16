@@ -46,9 +46,9 @@ def main():
         sprites,
         [
             Enemy((20.5, 11.5), 'zombie'),
-            # Enemy((10.5, 11.5), 'zombie'),
-            # Enemy((10.5, 10.5), 'zombie'),
-            # Enemy((10.5, 9.5), 'zombie')
+            Enemy((10.5, 11.5), 'zombie'),
+            Enemy((10.5, 10.5), 'zombie'),
+            Enemy((10.5, 9.5), 'zombie')
         ]
     )
 
