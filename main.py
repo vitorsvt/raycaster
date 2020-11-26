@@ -3,16 +3,15 @@ import sys, time, math
 
 from player import Player
 from level import Level
-from sprite import Sprite
 from entity import Enemy, Item, Scenario
 from Game import Game
 from Tileset import Tileset, AnimatedTileset
+from Camera import Camera
 
 from pygame.locals import *
 
 def main():
     game = Game((480, 320))
-
     sprites = {
         'enemy': AnimatedTileset('./sprites/enemy.png', 64, {
             'idle': [1],
@@ -28,29 +27,17 @@ def main():
         }, 5),
         'walls': Tileset('./sprites/walls.png', 64, 9)
     }
-
     player = Player((2,2))
+    level = Level('./map.json')
+    camera = Camera((480, 320), sprites)
 
-    level = Level(
-        (12,12),
-        {'floor': (15,5,5), 'ceil': (35,5,5)}, 
-        sprites,
-        [
-            Enemy((10.5, 8.5), 'enemy'),
-            Enemy((10.5, 5.5), 'enemy'),
-            Enemy((10.5, 2.5), 'enemy'),
-            Enemy((10.5, 3.5), 'enemy')
-        ]
-    )
-
-    display = pg.Surface((480, 320))
     while True:
         game.update_time()
         player.inputs['mouse'] = pg.mouse.get_rel()
-        level.raycast(display, player)
-        level.spritecast(display, player)
-        player.draw_weapon(display, sprites)
-        player.move(level.map, level.middle, game.dt)
+        camera.raycast(level, player)
+        camera.spritecast(level, player)
+        player.draw_weapon(camera.surface, sprites)
+        player.move(level.map, camera.middle, game.dt)
         player.update()
         level.update(player, game.dt)
         
@@ -74,7 +61,7 @@ def main():
             if e.type == MOUSEBUTTONUP:
                 player.inputs['lmb'] = False
 
-        game.update(display, 60)
+        game.update(camera.surface, 60)
 
 if __name__ == "__main__":
     main()

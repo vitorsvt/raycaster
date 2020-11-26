@@ -25,8 +25,8 @@ class Scenario(Entity):
         Entity.__init__(self, pos, name)
 
 class Enemy(Entity):
-    def __init__(self, pos, name):
-        Entity.__init__(self, pos, name, 'idle')
+    def __init__(self, pos):
+        Entity.__init__(self, pos, 'enemy', 'idle')
 
         self.health = 100
         self.speed = 1.5
