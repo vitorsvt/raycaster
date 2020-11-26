@@ -1,6 +1,7 @@
 import pygame as pg
 import sys, time, math
 
+from Game import Game
 from player import Player
 from level import Level
 from sprite import Sprite
@@ -14,7 +15,7 @@ DISPLAY_SIZE = (480, 320)
 WINDOW_CENTER = (240, 160)
 
 def main():
-    screen, display = setup_pg()
+    game = Game((480, 320))
 
     sprites = {}
     sprites['pistol_idle'] = Sprite('pistol', [1], 5)
@@ -28,7 +29,7 @@ def main():
     sprites['zombie_shot_2'] = Sprite('assets/zombie_shot_2', [10])
     sprites['zombie_die'] = Sprite('assets/zombie_die', [5]*4 + [60])
 
-    player = Player((22,11.5), (-1,0), (0, 0.66))
+    player = Player((22,11.5))
     textures = [
             'walls/eagle.png',
             'walls/redbrick.png',
@@ -39,6 +40,7 @@ def main():
             'walls/wood.png',
             'walls/colorstone.png'
     ]
+
     level = Level(
         (24,24),
         {'floor': (15,5,5), 'ceil': (35,5,5)}, 
@@ -52,29 +54,23 @@ def main():
         ]
     )
 
-    clock = pg.time.Clock()
-    last = time.time()
+    display = pg.Surface((480, 320))
     while True:
-        dt, last = update_time(last)
+        game.update_time()
         player.inputs['mouse'] = pg.mouse.get_rel()
-
         level.raycast(display, player)
         level.spritecast(display, player)
         player.draw_weapon(display, sprites)
-
-        player.move(level.map, level.middle, dt)
+        player.move(level.map, level.middle, game.dt)
         player.update()
-
-        level.update(player, dt)
+        level.update(player, game.dt)
         
         for e in pg.event.get():
             if e.type == QUIT:
-                pg.quit()
-                sys.exit()
+                game.quit()
             if e.type == KEYDOWN:
                 if e.key == K_ESCAPE:
-                    pg.quit()
-                    sys.exit()
+                    game.quit()
                 if e.key == K_w: player.inputs['up'] = True
                 if e.key == K_s: player.inputs['down'] = True
                 if e.key == K_a: player.inputs['left'] = True
@@ -89,27 +85,7 @@ def main():
             if e.type == MOUSEBUTTONUP:
                 player.inputs['lmb'] = False
 
-        screen.blit(pg.transform.scale(display, WINDOW_SIZE), (0, 0))
-
-        pg.display.update()
-        clock.tick(FRAMERATE)
-
-def update_time(last):
-    dt = (time.time() - last)
-    return dt, time.time()
-
-def setup_pg():
-    pg.init()
-    pg.display.set_caption("PyRaycaster")
-
-    screen = pg.display.set_mode(WINDOW_SIZE, 0, 32)
-    display = pg.Surface(DISPLAY_SIZE)
-
-    pg.mouse.set_pos(WINDOW_CENTER)
-    pg.event.set_grab(True)
-    pg.mouse.set_visible(False)
-
-    return screen, display
+        game.update(display, 60)
 
 if __name__ == "__main__":
     main()

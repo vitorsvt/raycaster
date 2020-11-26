@@ -4,10 +4,11 @@ import math
 from tools import wrap_angle
 
 class Player:
-    def __init__(self, pos, direction, camera):
+    def __init__(self, pos):
         self.x, self.y = pos
-        self.dx, self.dy = direction
-        self.px, self.py = camera
+
+        self.dx, self.dy = (-1, 0)
+        self.px, self.py = (0, 0.66)
 
         self.health = 100
         self.speed = 5.0
