@@ -116,7 +116,7 @@ class Player:
 
     def draw_weapon(self, surface, sprites):
         dw, dh = surface.get_size()
-        sprite, self.weapon_frame = sprites[self.weapon+"_"+self.state].next(self.weapon_frame)
+        sprite, self.weapon_frame = sprites[self.weapon].next(self.state, self.weapon_frame)
         sw, sh = sprite.get_size()
 
         surface.blit(

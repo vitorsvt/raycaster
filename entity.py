@@ -14,7 +14,7 @@ class Entity:
         if self.state == "":
             return self.name
         else:
-            return self.name + "_" + self.state
+            return self.name, self.state
 
 class Item(Entity):
     def __init__(self, pos, name):
