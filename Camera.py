@@ -1,9 +1,7 @@
 import pygame as pg
-import numpy as np
-import math
+import math, tools
 
 from Text import Font
-from tools import *
 
 class Camera:
     def __init__(self, size, sprites):
@@ -47,6 +45,9 @@ class Camera:
         https://lodev.org/cgtutor/raycasting.html
         """
         w, h = self.size # Dimensões da tela
+
+        # if self.zbuffer != []:
+        #     print(min(self.zbuffer), max(self.zbuffer))
 
         self.zbuffer = []
 
@@ -148,7 +149,7 @@ class Camera:
             tex_height = step * draw_height
 
             # Recortamos a linha vertical da textura, e aumentamos a altura
-            vline = pg.transform.scale(clip(
+            vline = pg.transform.scale(tools.clip(
                 tex_image,
                 tex_x,
                 tex_y,
@@ -157,9 +158,13 @@ class Camera:
             ), (1, draw_height))
 
             # Sombra
-            if horizontal:
+            if level.dark:
                 shadow = pg.Surface(vline.get_size())
-                shadow.set_alpha(150)
+                shadow.set_alpha(max(min(235 - 255/distance, 255), 0))
+                vline.blit(shadow, (0, 0))
+            elif horizontal:
+                shadow = pg.Surface(vline.get_size())
+                shadow.set_alpha(100)
                 vline.blit(shadow, (0, 0))
 
             # Blit da linha vertical na surface
@@ -173,7 +178,7 @@ class Camera:
         self.middle = None
 
         for e in level.entities:
-            e.distance = basic_distance((e.x, e.y), (player.x, player.y))
+            e.distance = tools.basic_distance((e.x, e.y), (player.x, player.y))
 
         level.entities.sort(key=lambda e: e.distance, reverse=True)
 
@@ -211,7 +216,7 @@ class Camera:
                     )
                     tex_y = ((draw_end_y - 1) - h/2 + sprite_height/2) * tex_height / sprite_height
 
-                    vline = pg.transform.scale(clip(
+                    vline = pg.transform.scale(tools.clip(
                         sprite,
                         tex_x,
                         0,

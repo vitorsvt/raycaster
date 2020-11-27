@@ -1,9 +1,9 @@
 import pygame as pg
 import sys, time, math
 
-from player import Player
-from level import Level
-from entity import Enemy, Item, Scenario
+from Player import Player
+from Level import Level
+from Entities import Enemy, Item, Scenario
 from Game import Game
 from Tileset import Tileset, AnimatedTileset
 from Camera import Camera
@@ -30,8 +30,8 @@ def main():
     sounds = {
         'gunshot': './sound/gunshot.wav'
     }
-    player = Player((2,2), sounds)
     level = Level('./map.json')
+    player = Player((2,2), sounds)
     camera = Camera((480, 320), sprites)
 
     while True:

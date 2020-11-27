@@ -1,27 +1,16 @@
 import pygame as pg
 import numpy as np
 
-class Image:
-    def __init__(self, path):
-        self.image = pg.image.load(path).convert_alpha()
+import tools
 
-    def clip(self, surface, x, y, w, h):
-        handle = surface.copy()
-        area = pg.Rect(x,y,w,h)
-        handle.set_clip(area)
-        image = surface.subsurface(handle.get_clip())
-        return image.copy()
-
-
-class Tileset(Image):
+class Tileset:
     def __init__(self, path, tile, data, scale = 1):
-        Image.__init__(self, path)
-
+        self.image = pg.image.load(path).convert_alpha()
         self.tile = tile
 
         self.sprites = []
         for x in range(data):
-            sprite = pg.transform.scale(self.clip(
+            sprite = pg.transform.scale(tools.clip(
                 self.image,
                 x * self.tile, 0,
                 self.tile, self.tile
@@ -30,12 +19,9 @@ class Tileset(Image):
 
         self.nsprites = np.array(self.sprites)
 
-
-
-class AnimatedTileset(Image):
+class AnimatedTileset:
     def __init__(self, path, tile, data, scale = 1):
-        Image.__init__(self, path)
-
+        self.image = pg.image.load(path).convert_alpha()
         self.tile = tile
         self.sprites = {}
         self.durations = {}
@@ -45,7 +31,7 @@ class AnimatedTileset(Image):
             self.sprites[name] = []
             self.durations[name] = []
             for frame, x in zip(animation[1], range(len(animation[1]))):
-                frame_image = self.clip(
+                frame_image = tools.clip(
                     self.image,
                     x * self.tile, y * self.tile,
                     self.tile, self.tile

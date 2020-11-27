@@ -1,9 +1,7 @@
 import pygame as pg
 import math, json
-import numpy as np
 
-from tools import *
-from entity import Enemy
+from Entities import Enemy
 
 class Level:
     def __init__(self, file):
@@ -11,10 +9,10 @@ class Level:
             data = json.load(f)
         
         self.map = data["map"]
-        self.nmap = np.array(data["map"])
         self.width, self.height = len(data["map"][0]), len(data["map"])
         self.color = tuple(data["floor_color"]), tuple(data["ceil_color"])
         self.entities = [Enemy(pos) for pos in data["enemies"]]
+        self.dark = False
 
         self.tex_width, self.tex_height = (64, 64)
 

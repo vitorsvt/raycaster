@@ -3,6 +3,7 @@ import time, sys
 
 class Game:
     def __init__(self, resolution):
+        pg.mixer.pre_init(44100, -16, 2, 512)
         pg.init()
         pg.display.set_caption('Raycaster')
         pg.mixer.music.load('./sound/music.wav')
