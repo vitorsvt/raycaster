@@ -1,4 +1,5 @@
 import pygame as pg
+import numpy as np
 
 class Image:
     def __init__(self, path):
@@ -26,6 +27,8 @@ class Tileset(Image):
                 self.tile, self.tile
             ), (self.tile * scale, self.tile * scale))
             self.sprites.append(sprite.copy())
+
+        self.nsprites = np.array(self.sprites)
 
 
 

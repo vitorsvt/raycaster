@@ -1,15 +1,45 @@
 import pygame as pg
+import numpy as np
 import math
 
+from Text import Font
 from tools import *
 
 class Camera:
     def __init__(self, size, sprites):
+        self.font = Font('./sprites/font.png')
         self.size = size
         self.surface = pg.Surface(size)
         self.sprites = sprites
         self.middle = None
         self.zbuffer = []
+
+    def draw_hud(self, player):
+        w, h = self.size
+        # Health
+        self.font.render(self.surface, 'HEALTH', (10, h - 2*(self.font.height + 10)))
+        self.font.render(self.surface, str(player.health) + "%", (10, h - (self.font.height + 10)))
+        # Ammo
+        self.font.render(self.surface, 'AMMO', (w - 4*self.font.space_width - 10, h - 2*(self.font.height + 10)))
+        ammo = str(player.ammo)
+        self.font.render(self.surface, ammo,
+            (w - len(ammo) * self.font.space_width - 10, h - (self.font.height + 10))
+        )
+        # Viewmodel
+        self.draw_weapon(player)
+
+    def draw_weapon(self, player):
+        sprite, player.weapon_frame = self.sprites[player.weapon].next(player.state, player.weapon_frame)
+        w, h = self.size
+        sw, sh = sprite.get_size()
+
+        self.surface.blit(
+            sprite,
+            (
+                (w - sw)/2 + player.offx,
+                h - sh + player.offy + 6
+            )
+        )  
 
     def raycast(self, level, player):
         """
@@ -18,7 +48,7 @@ class Camera:
         """
         w, h = self.size # Dimensões da tela
 
-        self.zbuffer = [0] * w
+        self.zbuffer = []
 
         # Cores do chão e do teto
         self.surface.fill(level.color[0], pg.Rect(0,h/2,w,h/2))
@@ -79,7 +109,7 @@ class Camera:
                 distance = (map_y - player.y + (1 - step_y) / 2) / ray_dy
             distance += 0.1
 
-            self.zbuffer[x] = distance
+            self.zbuffer.append(distance)
 
             line_height = int(h / distance)
 

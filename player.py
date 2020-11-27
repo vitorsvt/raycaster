@@ -1,16 +1,18 @@
 import pygame as pg
 import math
 
+from Sound import Sound
 from tools import wrap_angle
 
 class Player:
-    def __init__(self, pos):
+    def __init__(self, pos, sound):
         self.x, self.y = pos
 
         self.dx, self.dy = (-1, 0)
         self.px, self.py = (0, 0.66)
 
         self.health = 100
+        self.ammo = 50
         self.speed = 5.0
         self.rot = 3.0
         self.moving = False
@@ -26,6 +28,7 @@ class Player:
         self.weapon = 'pistol'
         self.state = 'idle'
 
+        self.sound = Sound(sound)
         self.inputs = {
             'up': False, 'down': False, 'left': False, 'right': False,
             'mouse': [0,0], 'lmb': False, 'rmb': False
@@ -108,21 +111,12 @@ class Player:
         self.health -= damage
 
     def shoot(self, target):
-        if self.shoot_delay == 0:
+        if self.shoot_delay == 0 and self.ammo > 0:
             if target != None and target.health > 0:
                 target.damage(50)
+            self.sound.play('gunshot')
             self.shoot_delay = 25
             self.state = 'shoot'
+            self.ammo -= 1
 
-    def draw_weapon(self, surface, sprites):
-        dw, dh = surface.get_size()
-        sprite, self.weapon_frame = sprites[self.weapon].next(self.state, self.weapon_frame)
-        sw, sh = sprite.get_size()
-
-        surface.blit(
-            sprite,
-            (
-                (dw - sw)/2 + self.offx,
-                dh - sh + self.offy + 6
-            )
-        )        
+      

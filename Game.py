@@ -3,9 +3,10 @@ import time, sys
 
 class Game:
     def __init__(self, resolution):
-
         pg.init()
         pg.display.set_caption('Raycaster')
+        pg.mixer.music.load('./sound/music.wav')
+        pg.mixer.music.play(-1)
 
         # Dimensões da janela e a surface
         self.resolution = resolution

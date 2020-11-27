@@ -11,7 +11,7 @@ from Camera import Camera
 from pygame.locals import *
 
 def main():
-    game = Game((480, 320))
+    game = Game((720, 480))
     sprites = {
         'enemy': AnimatedTileset('./sprites/enemy.png', 64, {
             'idle': [1],
@@ -27,16 +27,21 @@ def main():
         }, 5),
         'walls': Tileset('./sprites/walls.png', 64, 9)
     }
-    player = Player((2,2))
+    sounds = {
+        'gunshot': './sound/gunshot.wav'
+    }
+    player = Player((2,2), sounds)
     level = Level('./map.json')
     camera = Camera((480, 320), sprites)
 
     while True:
         game.update_time()
         player.inputs['mouse'] = pg.mouse.get_rel()
+
         camera.raycast(level, player)
         camera.spritecast(level, player)
-        player.draw_weapon(camera.surface, sprites)
+        camera.draw_hud(player)
+
         player.move(level.map, camera.middle, game.dt)
         player.update()
         level.update(player, game.dt)
