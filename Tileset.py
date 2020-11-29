@@ -8,16 +8,24 @@ class Tileset:
         self.image = pg.image.load(path).convert_alpha()
         self.tile = tile
 
-        self.sprites = []
-        for x in range(data):
-            sprite = pg.transform.scale(tools.clip(
-                self.image,
-                x * self.tile, 0,
-                self.tile, self.tile
-            ), (self.tile * scale, self.tile * scale))
-            self.sprites.append(sprite.copy())
-
-        self.nsprites = np.array(self.sprites)
+        if isinstance(data, list):
+            self.sprites = {}
+            for x in range(len(data)):
+                sprite = pg.transform.scale(tools.clip(
+                    self.image,
+                    x * self.tile, 0,
+                    self.tile, self.tile
+                ), (self.tile * scale, self.tile * scale))
+                self.sprites[data[x]] = sprite.copy()
+        else:
+            self.sprites = []
+            for x in range(data):
+                sprite = pg.transform.scale(tools.clip(
+                    self.image,
+                    x * self.tile, 0,
+                    self.tile, self.tile
+                ), (self.tile * scale, self.tile * scale))
+                self.sprites.append(sprite.copy())
 
 class AnimatedTileset:
     def __init__(self, path, tile, data, scale = 1):

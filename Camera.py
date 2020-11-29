@@ -183,9 +183,12 @@ class Camera:
         level.entities.sort(key=lambda e: e.distance, reverse=True)
 
         for entity in level.entities:
-            sprite, entity.frame = self.sprites[entity.name].next(entity.state, entity.frame)
-            tex_width, tex_height = sprite.get_size()
+            if entity.type == "enemy":
+                sprite = entity.next()
+            else:
+                sprite = entity.sprite
 
+            tex_width, tex_height = sprite.get_size()
             sprite_x = entity.x - player.x
             sprite_y = entity.y - player.y
 
@@ -206,7 +209,7 @@ class Camera:
             draw_start_x = int(-sprite_width/2 + sprite_screen_x)
             draw_end_x = int(sprite_width/2 + sprite_screen_x)
             
-            if draw_start_x < w/2 < draw_end_x and 0 < transform_y < self.zbuffer[int(w/2)] and entity.health > 0:
+            if draw_start_x < w/2 < draw_end_x and 0 < transform_y < self.zbuffer[int(w/2)] and entity.type == "enemy" and entity.health > 0:
                 self.middle = entity
 
             for stripe in range(draw_start_x, draw_end_x):

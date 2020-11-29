@@ -1,18 +1,20 @@
 import pygame as pg
-import time, sys
+import time, sys, json
+
+from Sound import Sound
+from Tileset import Tileset, AnimatedTileset
 
 class Game:
     def __init__(self, resolution):
         pg.mixer.pre_init(44100, -16, 2, 512)
         pg.init()
         pg.display.set_caption('Raycaster')
-        pg.mixer.music.load('./sound/music.wav')
-        pg.mixer.music.play(-1)
 
         # Dimensões da janela e a surface
         self.resolution = resolution
         self.screen = pg.display.set_mode(resolution, 0, 32)
 
+        # Configurações do mouse
         pg.mouse.set_pos((resolution[0] // 2, resolution[1] // 2))
         pg.event.set_grab(True)
         pg.mouse.set_visible(False)
@@ -21,6 +23,28 @@ class Game:
         self.clock = pg.time.Clock()
         self.dt = 0
         self.last = time.time()
+
+        # Entradas
+        self.inputs = {
+            'up': False, 'down': False, 'left': False, 'right': False,
+            'mouse': [0,0], 'lmb': False, 'rmb': False
+        }
+
+        # Estado do jogo
+        self.state = "menu"
+    
+    def load(self, file):
+        with open(file) as f:
+            data = json.load(f)
+
+        sounds = Sound(data["sounds"])
+        sprites = { 
+            k:(
+                AnimatedTileset(*v) if isinstance(v[2], dict) else Tileset(*v)
+            ) for k,v in data["sprites"].items()
+        }
+
+        return data, sprites, sounds
 
     def update(self, surface, framerate):
         """

@@ -1,34 +1,28 @@
-import math, random
+import math, random, tools
 
-from tools import basic_distance
-
-class Entity:
-    def __init__(self, pos, name, state = ""):
+class Item:
+    def __init__(self, pos, sprite, category):
         self.x, self.y = pos
-        self.name = name
-        self.state = state
-        self.frame = 0
+        self.type = "item"
+        self.distance = 0
+        self.sprite = sprite
+        self.category = category
+        self.values = {
+            "health": 50 if category == "health" else 0,
+            "ammo": 50 if category == "ammo" else 0
+        }
+
+class Enemy:
+    def __init__(self, pos, sprite, health = 100):
+        self.x, self.y = pos
         self.distance = 0
 
-    def get_sprite(self):
-        if self.state == "":
-            return self.name
-        else:
-            return self.name, self.state
+        self.sprite = sprite
+        self.state = "idle"
+        self.frame = 0
 
-class Item(Entity):
-    def __init__(self, pos, name):
-        Entity.__init__(self, pos, name)
-
-class Scenario(Entity):
-    def __init__(self, pos, name):
-        Entity.__init__(self, pos, name)
-
-class Enemy(Entity):
-    def __init__(self, pos):
-        Entity.__init__(self, pos, 'enemy', 'idle')
-
-        self.health = 100
+        self.type = "enemy"
+        self.health = health
         self.speed = 1.5
         self.delay = {
             'attack': 0,
@@ -36,8 +30,6 @@ class Enemy(Entity):
             'die': 0
         }
 
-        # Propriedades de movimentação
-        self.new_x, self.new_y = pos
         self.angle = 0
         self.dx = math.cos(self.angle)
         self.dy = math.sin(self.angle)
@@ -46,14 +38,26 @@ class Enemy(Entity):
         self.step = 0
         self.distance = 0
 
-    def collide(self, tiles, delta):
-        return tiles[int(delta[0])][int(delta[1])] == 0
+    def next(self):
+        sprite, self.frame = self.sprite.next(self.state, self.frame)
+        return sprite
+
+    def update_delta(self):
+        self.dx = math.cos(self.angle) + self.rand_x
+        self.dy = math.sin(self.angle) + self.rand_y
+
+    def change_state(self, new, delay = 0):
+        if self.state != new:
+            self.frame = 0
+        if delay != 0:
+            self.delay[new] = delay
+        self.state = new
 
     def damage(self, damage):
         self.health -= damage
         if self.health > 0:
-            sprite_number = random.randint(1, 2)
-            self.change_state('shot_' + str(sprite_number))
+            sprite = random.randint(1, 2)
+            self.change_state('shot_' + str(sprite))
             self.delay['damage'] = 10
         elif self.state != 'die':
             self.change_state('die', 80)
@@ -67,16 +71,8 @@ class Enemy(Entity):
             self.state = 'idle'
             self.frame = 0
 
-    def change_state(self, new, delay = 0):
-        if self.state != new:
-            self.frame = 0
-        if delay != 0:
-            self.delay[new] = delay
-        self.state = new
-
     def update(self, tiles, player, dt):
         self.angle = math.atan2(player.y - self.y, player.x - self.x)
-        # d = basic_distance((player.x, player.y),(self.x, self.y))
 
         # Update delay
         if self.delay['attack'] > 0:
@@ -87,7 +83,6 @@ class Enemy(Entity):
         elif self.delay['damage'] > 0:
             self.delay['damage'] -= 1
         else:
-
             if self.step > 9:
                 self.step = 0
                 self.rand_x = random.uniform(-0.5,0.5)
@@ -95,8 +90,7 @@ class Enemy(Entity):
             else:
                 self.step += 1
 
-            self.dx = math.cos(self.angle) + self.rand_x
-            self.dy = math.sin(self.angle) + self.rand_y
+            self.update_delta()
 
             if self.distance >= 1.0:
                 self.change_state('run')
@@ -110,7 +104,7 @@ class Enemy(Entity):
                 else:
                     new_x = new_y = 0
 
-            if self.collide(tiles, (new_x, self.y)):
+            if tools.collide(tiles, (new_x, self.y)):
                 self.x = new_x
-            if self.collide(tiles, (self.x, new_y)):
+            if tools.collide(tiles, (self.x, new_y)):
                 self.y = new_y

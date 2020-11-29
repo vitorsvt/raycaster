@@ -5,8 +5,8 @@ from Sound import Sound
 from tools import wrap_angle
 
 class Player:
-    def __init__(self, pos, sound):
-        self.x, self.y = pos
+    def __init__(self, sounds):
+        self.x, self.y = (0,0)
 
         self.dx, self.dy = (-1, 0)
         self.px, self.py = (0, 0.66)
@@ -28,11 +28,7 @@ class Player:
         self.weapon = 'pistol'
         self.state = 'idle'
 
-        self.sound = Sound(sound)
-        self.inputs = {
-            'up': False, 'down': False, 'left': False, 'right': False,
-            'mouse': [0,0], 'lmb': False, 'rmb': False
-        }
+        self.sounds = sounds
 
     def update(self):
         if self.moving:
@@ -61,9 +57,9 @@ class Player:
     def collide(self, tiles, delta):
         return tiles[int(delta[0])][int(delta[1])] == 0
 
-    def move(self, tiles, middle, dt):
+    def move(self, inputs, tiles, middle, dt):
         self.moving = False
-        if self.inputs['up']:
+        if inputs['up']:
             self.moving = True
             new_x = self.x + self.dx * self.speed * dt
             if self.collide(tiles, (new_x, self.y)):
@@ -71,7 +67,7 @@ class Player:
             new_y = self.y + self.dy * self.speed * dt
             if self.collide(tiles, (self.x, new_y)):
                 self.y = new_y
-        if self.inputs['down']:
+        if inputs['down']:
             self.moving = True
             new_x = self.x - self.dx * self.speed * dt / 2
             if self.collide(tiles, (new_x, self.y)):
@@ -79,7 +75,7 @@ class Player:
             new_y = self.y - self.dy * self.speed * dt / 2
             if self.collide(tiles, (self.x, new_y)):
                 self.y = new_y
-        if self.inputs['left']:
+        if inputs['left']:
             self.moving = True
             new_x = self.x - self.dy * self.speed * dt / 2
             if self.collide(tiles, (new_x, self.y)):
@@ -87,7 +83,7 @@ class Player:
             new_y = self.y + self.dx * self.speed * dt / 2
             if self.collide(tiles, (self.x, new_y)):
                 self.y = new_y
-        if self.inputs['right']:
+        if inputs['right']:
             self.moving = True
             new_x = self.x + self.dy * self.speed * dt / 2
             if self.collide(tiles, (new_x, self.y)):
@@ -95,8 +91,8 @@ class Player:
             new_y = self.y - self.dx * self.speed * dt / 2
             if self.collide(tiles, (self.x, new_y)):
                 self.y = new_y
-        if self.inputs['mouse'][0] != 0:
-            rotation = -(self.inputs['mouse'][0]) * 0.08 * dt
+        if inputs['mouse'][0] != 0:
+            rotation = -(inputs['mouse'][0]) * 0.08 * dt
 
             old_dx = self.dx
             self.dx = self.dx * math.cos(rotation) - self.dy * math.sin(rotation)
@@ -104,7 +100,7 @@ class Player:
             old_px = self.px
             self.px = self.px * math.cos(rotation) - self.py * math.sin(rotation)
             self.py = old_px * math.sin(rotation) + self.py * math.cos(rotation)
-        if self.inputs['lmb']:
+        if inputs['lmb']:
             self.shoot(middle)
 
     def damage(self, damage):
@@ -114,7 +110,7 @@ class Player:
         if self.shoot_delay == 0 and self.ammo > 0:
             if target != None and target.health > 0:
                 target.damage(50)
-            self.sound.play('gunshot')
+            self.sounds.play('gunshot')
             self.shoot_delay = 25
             self.state = 'shoot'
             self.ammo -= 1
