@@ -1,6 +1,8 @@
 import pygame as pg
 import time, json, sys
 from loaders import Sound, Tileset, AnimatedTileset
+from entities import Player
+from ui import Menu, Camera, Loading
 from level import Level
 
 class Game:
@@ -25,24 +27,30 @@ class Game:
         }
         # Estado do jogo
         self.state = "menu"
-        self.level = 0
         # Fases
-        self.levels = []
+        self.level = None
+        self.levels = None
+        self.loading = 0
 
     def next_level(self, player):
-        self.level += 1
-        if self.level >= len(self.levels):
-            print('Você ganhou!')
-            self.quit()
+        if self.state != "loading":
+            self.level = next(self.levels, False)
+            if self.level == False:
+                print('Você ganhou!')
+                self.quit()
+            else:
+                self.change_state("loading")
+                self.loading = 120
         else:
-            self.levels[self.level].play()
-            player.respawn(self.levels[self.level].spawn)
+            self.change_state("play")
+            self.level.play()
+            player.respawn(self.level.spawn)
 
     def change_state(self, new):
         self.inputs['lmb'] = False
         if new == "quit":
             self.quit()
-        if new == "menu":
+        elif new in ["menu", "loading"]:
             pg.event.set_grab(False)
             pg.mouse.set_visible(True)
             self.state = new
@@ -52,6 +60,9 @@ class Game:
             self.state = new
     
     def load(self, file):
+        """
+        Carrega o arquivo json com as configurações e níveis
+        """
         with open(file) as f:
             data = json.load(f)
 
@@ -61,9 +72,14 @@ class Game:
                 AnimatedTileset(*v) if isinstance(v[2], dict) else Tileset(*v)
             ) for k,v in data["sprites"].items()
         }
-        self.levels = [Level(level, sprites) for level in data["levels"]]
-
-        return data, sprites, sounds
+        self.levels = iter(Level(level, sprites) for level in data["levels"])
+        self.level = next(self.levels)
+        surface = int(self.resolution[0] / 1.5), int(self.resolution[1] / 1.5)
+        camera = Camera(surface, sprites)
+        loading = Loading(surface)
+        menu = Menu(surface)
+        player = Player(sounds)
+        return player, camera, menu, loading
 
     def update(self, surface, framerate):
         """

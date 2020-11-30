@@ -1,6 +1,19 @@
 import pygame as pg
 import math, tools
 
+class Loading:
+    def __init__(self, size):
+        self.size = size
+        self.surface = pg.Surface(size)
+
+        self.background = pg.Rect((0,0), size)
+        self.font = Font('./sprites/font.png')
+
+    def draw(self):
+        self.font.render(self.surface, 'LOADING NEW AREA',
+            (240 - self.font.space_width * 8, 160)
+        )
+
 class Menu:
     def __init__(self, size):
         self.size = size

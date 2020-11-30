@@ -1,32 +1,22 @@
 import pygame as pg
 from game import Game
-from ui import Menu, Camera
-from entities import Player
-
 from pygame.locals import *
 
 def main():
     game = Game((720, 480))
-    data, sprites, sounds = game.load('game.json')
-
-    menu = Menu((480, 320))
-    player = Player(sounds)
-    camera = Camera((480, 320), sprites)
-
-    game.levels[game.level].play()
-    player.x, player.y = game.levels[game.level].spawn
-
+    player, camera, menu, loading = game.load('game.json')
+    game.level.play()
+    player.x, player.y = game.level.spawn
     while True:
         game.update_time()
         game.inputs['mouse'] = pg.mouse.get_rel()
-
         if game.state == "play":
-            camera.raycast(game.levels[game.level], player)
-            camera.spritecast(game.levels[game.level], player)
+            camera.raycast(game.level, player)
+            camera.spritecast(game.level, player)
             camera.draw_hud(player)
-            player.move(game, game.levels[game.level].map, camera.middle)
+            player.move(game, game.level.map, camera.middle)
             player.update(game)
-            game.levels[game.level].update(player, game)
+            game.level.update(player, game)
             game.update(camera.surface, 60)
         elif game.state == "menu":
             menu.draw()
@@ -34,7 +24,14 @@ def main():
                 new = menu.click()
                 game.change_state(new)
             game.update(menu.surface, 60)
-
+        elif game.state == "loading":
+            loading.draw()
+            if game.loading == 0:
+                game.next_level(player)
+            else:
+                game.loading -= 1
+            game.update(loading.surface, 60)
+        # Atualiza os inputs
         for e in pg.event.get():
             if e.type == QUIT:
                 game.quit()
