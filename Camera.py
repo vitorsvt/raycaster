@@ -37,11 +37,11 @@ class Camera:
                 (w - sw)/2 + player.offx,
                 h - sh + player.offy + 6
             )
-        )  
+        )
 
     def raycast(self, level, player):
         """
-        Algoritmo de raycast (e a aplicação em C++) foi retirado do site:
+        Algoritmo de raycast foi retirado do site (aplicação em C++):
         https://lodev.org/cgtutor/raycasting.html
         """
         w, h = self.size # Dimensões da tela
@@ -199,35 +199,35 @@ class Camera:
 
             sprite_screen_x = int((w/2) * (1 + transform_x / transform_y))
 
-            sprite_height = abs(int(h / transform_y))
-            if sprite_height > 500: sprite_height = 500
+            sprite_height = min(abs(int(h / transform_y)), 500) # Limite para não deixar o jogo lento
 
             draw_start_y = int(-sprite_height/2 + h/2)
             draw_end_y = int(sprite_height/2 + h/2)
 
-            sprite_width = abs(int(h / transform_y))
+            sprite_width = min(abs(int(h / transform_y)), 500) # Limite para não deixar o jogo lento
             draw_start_x = int(-sprite_width/2 + sprite_screen_x)
             draw_end_x = int(sprite_width/2 + sprite_screen_x)
             
             if draw_start_x < w/2 < draw_end_x and 0 < transform_y < self.zbuffer[int(w/2)] and entity.type == "enemy" and entity.health > 0:
                 self.middle = entity
 
-            for stripe in range(draw_start_x, draw_end_x):
-                if (transform_y > 0 and stripe > 0 and stripe < w and transform_y < self.zbuffer[stripe]):
-                    tex_x = int(
-                        (stripe - (-sprite_width / 2 + sprite_screen_x)) * tex_width / sprite_width
-                    )
-                    tex_y = ((draw_end_y - 1) - h/2 + sprite_height/2) * tex_height / sprite_height
+            if draw_start_x < w and draw_end_x > 0:
+                for stripe in range(max(draw_start_x, 0), min(draw_end_x, w)):
+                    if (transform_y > 0 and stripe > 0 and stripe < w and transform_y < self.zbuffer[stripe]):
+                        tex_x = int(
+                            (stripe - (-sprite_width / 2 + sprite_screen_x)) * tex_width / sprite_width
+                        )
+                        tex_y = ((draw_end_y - 1) - h/2 + sprite_height/2) * tex_height / sprite_height
 
-                    vline = pg.transform.scale(tools.clip(
-                        sprite,
-                        tex_x,
-                        0,
-                        1,
-                        tex_y
-                    ), (1, sprite_height))
+                        vline = pg.transform.scale(tools.clip(
+                            sprite,
+                            tex_x,
+                            0,
+                            1,
+                            tex_y
+                        ), (1, sprite_height))
 
-                    self.surface.blit(
-                        vline,
-                        (stripe, draw_start_y)
-                    )
+                        self.surface.blit(
+                            vline,
+                            (stripe, draw_start_y)
+                        )

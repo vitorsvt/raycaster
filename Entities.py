@@ -7,10 +7,7 @@ class Item:
         self.distance = 0
         self.sprite = sprite
         self.category = category
-        self.values = {
-            "health": 50 if category == "health" else 0,
-            "ammo": 50 if category == "ammo" else 0
-        }
+        self.value = 50
 
 class Enemy:
     def __init__(self, pos, sprite, health = 100):
@@ -83,28 +80,28 @@ class Enemy:
         elif self.delay['damage'] > 0:
             self.delay['damage'] -= 1
         else:
-            if self.step > 9:
+            if self.step > 60:
                 self.step = 0
-                self.rand_x = random.uniform(-0.5,0.5)
-                self.rand_y = random.uniform(-0.5,0.5)
+                self.rand_x = random.uniform(-1,1)
+                self.rand_y = random.uniform(-1,1)
             else:
                 self.step += 1
 
             self.update_delta()
 
-            if self.distance >= 1.0:
-                self.change_state('run')
-                new_x = self.x + self.dx * dt * self.speed
-                new_y = self.y + self.dy * dt * self.speed
-            else:
-                self.attack(player)
-                if self.distance <= 0.5:
-                    new_x = self.x - self.dx * dt * self.speed
-                    new_y = self.y - self.dy * dt * self.speed
+            if self.distance < 200:
+                if self.distance >= 1.0:
+                    self.change_state('run')
+                    new_x = self.x + self.dx * dt * self.speed
+                    new_y = self.y + self.dy * dt * self.speed
                 else:
-                    new_x = new_y = 0
-
-            if tools.collide(tiles, (new_x, self.y)):
-                self.x = new_x
-            if tools.collide(tiles, (self.x, new_y)):
-                self.y = new_y
+                    self.attack(player)
+                    if self.distance <= 0.5:
+                        new_x = self.x - self.dx * dt * self.speed
+                        new_y = self.y - self.dy * dt * self.speed
+                    else:
+                        new_x = new_y = 0
+                if tools.collide(tiles, (new_x, self.y)):
+                    self.x = new_x
+                if tools.collide(tiles, (self.x, new_y)):
+                    self.y = new_y

@@ -28,16 +28,17 @@ class Level:
         pg.mixer.music.load(self.music)
         pg.mixer.music.play(-1)
 
-    def update(self, player, dt):
+    def update(self, player, game):
+        done = True
         for entity in self.entities:
             if entity.type == "enemy":
+                done = False
                 if entity.health <= 0 and entity.delay['die'] == 0:
                     self.entities.remove(entity)
                 else:
-                    entity.update(self.map, player, dt)
+                    entity.update(self.map, player, game.dt)
             else:
-                if entity.x == int(player.x) and entity.y == int(player.y):
-                    player.health = min(100, player.health + entity.values["health"])
-                    player.ammo += entity.values["ammo"]
+                if player.pickup(entity):
                     self.entities.remove(entity)
-    
+        if done:
+            game.next_level(player)

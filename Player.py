@@ -30,7 +30,15 @@ class Player:
 
         self.sounds = sounds
 
-    def update(self):
+    def respawn(self, pos):
+        self.x, self.y = pos
+        self.ammo = max(20, self.ammo)
+        self.state = 'idle'
+
+    def update(self, game):
+        if self.health <= 0:
+            print('Você morreu...')
+            game.quit()
         if self.moving:
             self.offx += self.offx_inc
             if self.offx > 10 or self.offx < -10:
@@ -57,7 +65,10 @@ class Player:
     def collide(self, tiles, delta):
         return tiles[int(delta[0])][int(delta[1])] == 0
 
-    def move(self, inputs, tiles, middle, dt):
+    def move(self, game, tiles, middle):
+        inputs = game.inputs
+        dt = game.dt
+
         self.moving = False
         if inputs['up']:
             self.moving = True
@@ -93,7 +104,6 @@ class Player:
                 self.y = new_y
         if inputs['mouse'][0] != 0:
             rotation = -(inputs['mouse'][0]) * 0.08 * dt
-
             old_dx = self.dx
             self.dx = self.dx * math.cos(rotation) - self.dy * math.sin(rotation)
             self.dy = old_dx * math.sin(rotation) + self.dy * math.cos(rotation)
@@ -102,17 +112,28 @@ class Player:
             self.py = old_px * math.sin(rotation) + self.py * math.cos(rotation)
         if inputs['lmb']:
             self.shoot(middle)
+        if inputs['esc']:
+            game.change_state('menu')
 
     def damage(self, damage):
         self.health -= damage
 
     def shoot(self, target):
         if self.shoot_delay == 0 and self.ammo > 0:
+            self.sounds.play('gunshot')
             if target != None and target.health > 0:
                 target.damage(50)
-            self.sounds.play('gunshot')
+                self.sounds.play('damage')
             self.shoot_delay = 25
             self.state = 'shoot'
             self.ammo -= 1
 
-      
+    def pickup(self, item):
+        if item.x == int(self.x) and item.y == int(self.y):
+            if item.category == "health":
+                self.health = min(100, self.health + item.value)
+                self.sounds.play('health')
+            else:
+                self.ammo += item.value
+                self.sounds.play('ammo')
+            return True
