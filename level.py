@@ -1,7 +1,5 @@
 import pygame as pg
-import math, json
-
-from Entities import Enemy, Item
+from entities import Enemy, Item
 
 class Level:
     def __init__(self, data, sprites):

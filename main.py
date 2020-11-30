@@ -1,13 +1,7 @@
 import pygame as pg
-
-from Player import Player
-from Level import Level
-from Entities import Enemy, Item
-from Game import Game
-from Menu import Menu
-from Tileset import Tileset, AnimatedTileset
-from Camera import Camera
-from Sound import Sound
+from game import Game
+from ui import Menu, Camera
+from entities import Player
 
 from pygame.locals import *
 

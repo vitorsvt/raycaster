@@ -1,9 +1,7 @@
 import pygame as pg
-import time, sys, json
-
-from Sound import Sound
-from Tileset import Tileset, AnimatedTileset
-from Level import Level
+import time, json, sys
+from loaders import Sound, Tileset, AnimatedTileset
+from level import Level
 
 class Game:
     def __init__(self, resolution):

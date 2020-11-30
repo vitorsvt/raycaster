@@ -14,6 +14,13 @@
             "shot_2": [10],
             "die": [5,5,5,5,80]
         }, 1],
+        "boss": ["./sprites/boss.png", 64, {
+            "idle": [1],
+            "run": [5,5,5,5],
+            "attack": [10,10],
+            "shot": [10],
+            "die": [5,5,5,80]
+        }, 1],
         "pistol": ["./sprites/pistol.png", 32, {
             "idle": [1],
             "shoot": [5,5,5,5,5]

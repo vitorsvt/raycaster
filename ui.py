@@ -1,7 +1,74 @@
 import pygame as pg
 import math, tools
 
-from Text import Font
+class Menu:
+    def __init__(self, size):
+        self.size = size
+        self.surface = pg.Surface(size)
+
+        self.background = pg.Rect((0,0), size)
+        self.font = Font('./sprites/font.png')
+        self.play = pg.Rect(30, 160, 200, 50)
+        self.exit = pg.Rect(30, 240, 200, 50)
+
+    def draw(self):
+        pg.draw.rect(self.surface, (15,15,15), self.background)
+        pg.draw.rect(self.surface, (0,255,0), self.play)
+        pg.draw.rect(self.surface, (255,0,0), self.exit)
+        self.font.render(self.surface, 'PLAY',
+            (45, 185 - self.font.height / 2)
+        )
+        self.font.render(self.surface, 'EXIT',
+            (45, 265 - self.font.height / 2)
+        )
+
+    def click(self):
+        pos = pg.mouse.get_pos()
+        pos = int(pos[0] / 1.5), int(pos[1] / 1.5)
+        if self.play.collidepoint(pos):
+            return "play"
+        elif self.exit.collidepoint(pos):
+            return "quit"
+        else:
+            return False
+
+class Font():
+    def __init__(self, path):
+        self.spacing = 1
+        self.character_order = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789!\"#$%&'()*+,-./"
+        font_img = pg.image.load(path).convert()
+        font_img.set_colorkey((0,0,0))
+        current_char_width = 0
+        self.characters = {}
+        character_count = 0
+        for x in range(font_img.get_width()):
+            c = font_img.get_at((x, 0))
+            if c[0] == 127:
+                char_img = tools.clip(font_img, x - current_char_width, 0, current_char_width, font_img.get_height())
+                self.characters[self.character_order[character_count]] = char_img.copy()
+                character_count += 1
+                current_char_width = 0
+            else:
+                current_char_width += 1
+        self.space_width = self.characters['A'].get_width()
+        self.height = self.characters['A'].get_height()
+
+    def render(self, surf, text, loc, change = (0,0)):
+        length = len(text)
+
+        x_offset = y_offset = 0
+        for i in range(length):
+            char = text[i]
+            if char != ' ':
+                surf.blit(self.characters[char], (loc[0] + x_offset, loc[1] + y_offset))
+                x_offset += self.characters[char].get_width() + self.spacing
+            else:
+                x_offset += self.space_width + self.spacing
+
+            if i < int(length / 2) - 1:
+                y_offset += change[0]
+            else:
+                y_offset -= change[1]
 
 class Camera:
     def __init__(self, size, sprites):
