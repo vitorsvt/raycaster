@@ -19,9 +19,11 @@ class Interface:
         self.music = music
         self.timers = {
             "victory": -1,
-            "victory_max": 300,
+            "victory_max": 120,
             "loading": -1,
-            "loading_max": 120
+            "loading_max": 120,
+            "defeat": -1,
+            "defeat_max": 120
         }
 
     def menu(self, game):
@@ -92,6 +94,22 @@ class Interface:
             self.timers['victory'] -= 1
         elif self.timers['victory'] == 0:
             self.timers['victory'] -= 1
+            tools.end()
+        game.update(self.surface, 60) # Desenha tudo
+
+    def defeat(self, game):
+        """Desenha a tela de derrota"""
+        pg.draw.rect(self.surface, self.color, self.background)
+        word_1 = 'YOU FAILED!'
+        self.font.render(self.surface, word_1,
+            (240 - self.font.space_width * len(word_1) / 2, 140)
+        )
+        if self.timers['defeat'] == -1:
+            self.timers['defeat'] = self.timers['defeat_max']
+        elif self.timers['defeat'] > 0:
+            self.timers['defeat'] -= 1
+        elif self.timers['defeat'] == 0:
+            self.timers['defeat'] -= 1
             tools.end()
         game.update(self.surface, 60) # Desenha tudo
 

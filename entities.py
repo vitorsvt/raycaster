@@ -38,11 +38,10 @@ class Player:
         # Objeto de Sounds
         self.sounds = sounds
 
-    def update(self):
+    def update(self, game):
         """Atualiza algumas informações periódicas do player"""
         if self.health <= 0:
-            print('Você morreu...')
-            tools.end()
+            game.state.change_state('defeat')
         if self.moving:
             self.offx += self.offx_inc
             if self.offx > 10 or self.offx < -10:

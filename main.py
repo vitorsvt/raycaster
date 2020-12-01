@@ -19,7 +19,7 @@ def main():
             camera.spritecast(level, player)
             camera.hud(player)
             player.move(game, level.map, camera.middle, dt)
-            player.update()
+            player.update(game)
             level.update(player, game, dt)
             game.update(camera.surface, 60) # Desenha tudo
         elif game.state.current == "menu": # Se estiver pausado / menu
@@ -28,6 +28,8 @@ def main():
             level = interface.loading(game, player)
         elif game.state.current == "victory":
             interface.victory(game)
+        elif game.state.current == "defeat":
+            interface.defeat(game)
 
         for event in pg.event.get():
             # Atualiza os inputs
