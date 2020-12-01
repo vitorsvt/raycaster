@@ -7,7 +7,7 @@ from game import Game
 def main():
     """Inicializa a classe do jogo e realiza o loop principal"""
     game = Game((720, 480))
-    player, camera, menu, loading, victory = game.load('game.json')
+    player, camera, interface = game.load('game.json')
     level = game.state.level
     level.play_music()
     level.respawn(player)
@@ -17,35 +17,17 @@ def main():
         if game.state.current == "play": # Se estivermos jogando
             camera.raycast(level, player)
             camera.spritecast(level, player)
-            camera.draw_hud(player)
+            camera.hud(player)
             player.move(game, level.map, camera.middle, dt)
             player.update()
             level.update(player, game, dt)
             game.update(camera.surface, 60) # Desenha tudo
         elif game.state.current == "menu": # Se estiver pausado / menu
-            menu.draw()
-            if game.inputs['lmb']:
-                game.inputs['lmb'] = False
-                new = menu.click()
-                if new:
-                    game.state.change_state(new)
-            game.update(menu.surface, 60) # Desenha tudo
+            interface.menu(game)
         elif game.state.current == "loading": # Se estiver carregando
-            loading.draw()
-            if game.state.loading == 0:
-                game.state.next_level(player)
-                level = game.state.level
-            else:
-                game.state.loading -= 1
-            game.update(loading.surface, 60) # Desenha tudo
+            level = interface.loading(game, player)
         elif game.state.current == "victory":
-            victory.draw()
-            if victory.timer == 300:
-                victory.play_music()
-            victory.timer -= 1
-            if victory.timer <= 0:
-                tools.end()
-            game.update(victory.surface, 60) # Desenha tudo
+            interface.victory(game)
 
         for event in pg.event.get():
             # Atualiza os inputs

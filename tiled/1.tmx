@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<map version="1.4" tiledversion="1.4.3" orientation="orthogonal" renderorder="right-down" width="12" height="12" tilewidth="64" tileheight="64" infinite="0" nextlayerid="3" nextobjectid="27">
+ <editorsettings>
+  <export target="1.json" format="json"/>
+ </editorsettings>
+ <tileset firstgid="1" name="walls" tilewidth="64" tileheight="64" tilecount="10" columns="10">
+  <image source="../sprites/walls.png" width="640" height="64"/>
+ </tileset>
+ <layer id="1" name="walls" width="12" height="12">
+  <data encoding="csv">
+1,1,1,1,1,1,1,1,1,1,1,1,
+1,0,0,0,0,0,0,0,0,0,0,1,
+1,0,0,0,0,0,0,0,0,0,0,1,
+1,0,0,0,0,0,0,0,0,0,0,1,
+1,0,3,3,3,0,0,4,4,4,0,1,
+1,0,0,0,3,0,0,4,0,0,0,1,
+1,0,0,0,0,0,0,0,0,0,0,1,
+1,0,0,0,0,0,0,0,0,0,0,1,
+1,0,0,0,0,0,0,0,0,0,0,1,
+1,0,0,0,0,0,0,0,0,0,0,1,
+1,0,0,0,0,0,0,0,0,0,0,1,
+1,1,1,1,1,1,1,1,1,1,1,1
+</data>
+ </layer>
+ <objectgroup id="2" name="objects">
+  <object id="11" name="enemy" x="640" y="128">
+   <point/>
+  </object>
+  <object id="12" name="enemy" x="512" y="128">
+   <point/>
+  </object>
+  <object id="13" name="enemy" x="256" y="128">
+   <point/>
+  </object>
+  <object id="14" name="enemy" x="128" y="128">
+   <point/>
+  </object>
+  <object id="23" name="player" x="640" y="640">
+   <point/>
+  </object>
+  <object id="24" name="health" x="320" y="640">
+   <point/>
+  </object>
+  <object id="25" name="ammo" x="448" y="640">
+   <point/>
+  </object>
+ </objectgroup>
+</map>

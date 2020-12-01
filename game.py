@@ -6,7 +6,7 @@ import pygame as pg
 import tools
 from loaders import Sound, Spritesheet, AnimatedSpritesheet
 from entities import Player
-from ui import Menu, Camera, Loading, Victory
+from ui import Camera, Interface
 from level import Level
 
 class State:
@@ -17,8 +17,6 @@ class State:
         # Fases
         self.levels = levels
         self.level = next(self.levels)
-        # Timer da loading screen
-        self.loading = 0
 
     def next_level(self, player):
         """Muda de nível, ativa a loading screen e respawna o player"""
@@ -43,8 +41,6 @@ class State:
         else:
             pg.event.set_grab(False)
             pg.mouse.set_visible(True)
-            if new == "loading":
-                self.loading = 120
         self.current = new
 
 class Game:
@@ -94,11 +90,9 @@ class Game:
         self.state = State(levels)
         surface = int(self.resolution[0] / 1.5), int(self.resolution[1] / 1.5)
         camera = Camera(surface, sprites)
-        loading = Loading(surface)
-        menu = Menu(surface)
-        victory = Victory(surface, data["music"]["victory"])
+        interface = Interface(surface, data["music"]["victory"])
         player = Player(sounds)
-        return player, camera, menu, loading, victory
+        return player, camera, interface
 
     def update(self, surface, framerate):
         """

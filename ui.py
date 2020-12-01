@@ -4,25 +4,78 @@ import math
 import pygame as pg
 import tools
 
-class Victory:
-    """Classe para a tela de vitória"""
+class Interface:
+    """Classe para o desenho de todos os menus"""
     def __init__(self, size, music):
-        self.music = music
         self.size = size
         self.surface = pg.Surface(size)
-        self.timer = 300
-
-        self.background = pg.Rect((0,0), size)
         self.font = Font('./sprites/font.png')
+        self.background = pg.Rect((0,0), size)
+        self.color = (100,0,0)
+        self.buttons = {
+            'play': pg.Rect(140, 160, 200, 50),
+            'quit': pg.Rect(140, 240, 200, 50)
+        }
+        self.music = music
+        self.timers = {
+            "victory": -1,
+            "victory_max": 300,
+            "loading": -1,
+            "loading_max": 120
+        }
 
-    def play_music(self):
-        """Toca a música de vitória"""
-        pg.mixer.music.stop()
-        pg.mixer.music.load(self.music)
-        pg.mixer.music.play(-1)
-
-    def draw(self):
+    def menu(self, game):
         """Desenha na superfície"""
+        pg.draw.rect(self.surface, self.color, self.background)
+        pg.draw.rect(self.surface, (50,0,0), self.buttons['play'])
+        pg.draw.rect(self.surface, (50,0,0), self.buttons['quit'])
+        self.font.render(self.surface, 'THE LEGEND OF',
+            (240 - self.font.space_width * 6.5, 50 - self.font.height / 2)
+        )
+        self.font.render(self.surface, 'PYSLAYER',
+            (240 - self.font.space_width * 4, 100 - self.font.height / 2)
+        )
+        self.font.render(self.surface, 'PLAY',
+            (240 - self.font.space_width * 2, 185 - self.font.height / 2)
+        )
+        self.font.render(self.surface, 'QUIT',
+            (240 - self.font.space_width * 2, 265 - self.font.height / 2)
+        )
+        if game.inputs['lmb']:
+            game.inputs['lmb'] = False
+            new = self.click()
+            if new:
+                game.state.change_state(new)
+        game.update(self.surface, 60)
+
+    def click(self):
+        """Checa se os botões foram clicados"""
+        pos = pg.mouse.get_pos()
+        pos = int(pos[0] / 1.5), int(pos[1] / 1.5)
+        for button, rect in self.buttons.items():
+            if rect.collidepoint(pos):
+                return button
+        return False
+
+    def loading(self, game, player):
+        """Desenha a tela de carregamento"""
+        pg.draw.rect(self.surface, self.color, self.background)
+        self.font.render(self.surface, 'LOADING NEW AREA',
+            (240 - self.font.space_width * 8, 160)
+        )
+        if self.timers['loading'] == -1:
+            self.timers['loading'] = self.timers['loading_max']
+        elif self.timers['loading'] > 0:
+            self.timers['loading'] -= 1
+        elif self.timers['loading'] == 0:
+            self.timers['loading'] -= 1
+            game.state.next_level(player)
+        game.update(self.surface, 60)
+        return game.state.level
+
+    def victory(self, game):
+        """Desenha a tela de vitória"""
+        pg.draw.rect(self.surface, self.color, self.background)
         word_1 = 'CONGRATULATIONS!'
         word_2 = 'YOU WON!'
         self.font.render(self.surface, word_1,
@@ -32,54 +85,21 @@ class Victory:
             (240 - self.font.space_width * len(word_2) // 2, 200)
         )
 
-class Loading:
-    """Classe para a tela de carregamento"""
-    def __init__(self, size):
-        self.size = size
-        self.surface = pg.Surface(size)
+        if self.timers['victory'] == -1:
+            self.timers['victory'] = self.timers['victory_max']
+            self.play_music()
+        elif self.timers['victory'] > 0:
+            self.timers['victory'] -= 1
+        elif self.timers['victory'] == 0:
+            self.timers['victory'] -= 1
+            tools.end()
+        game.update(self.surface, 60) # Desenha tudo
 
-        self.background = pg.Rect((0,0), size)
-        self.font = Font('./sprites/font.png')
-
-    def draw(self):
-        """Desenha na superfície"""
-        self.font.render(self.surface, 'LOADING NEW AREA',
-            (240 - self.font.space_width * 8, 160)
-        )
-
-class Menu:
-    """Classe para o desenho do menu"""
-    def __init__(self, size):
-        self.size = size
-        self.surface = pg.Surface(size)
-
-        self.background = pg.Rect((0,0), size)
-        self.font = Font('./sprites/font.png')
-        self.play = pg.Rect(30, 160, 200, 50)
-        self.exit = pg.Rect(30, 240, 200, 50)
-
-    def draw(self):
-        """Desenha na superfície"""
-        pg.draw.rect(self.surface, (15,15,15), self.background)
-        pg.draw.rect(self.surface, (0,255,0), self.play)
-        pg.draw.rect(self.surface, (255,0,0), self.exit)
-        self.font.render(self.surface, 'PLAY',
-            (45, 185 - self.font.height / 2)
-        )
-        self.font.render(self.surface, 'EXIT',
-            (45, 265 - self.font.height / 2)
-        )
-
-    def click(self):
-        """Checa se os botões foram clicados"""
-        pos = pg.mouse.get_pos()
-        pos = int(pos[0] / 1.5), int(pos[1] / 1.5)
-        if self.play.collidepoint(pos):
-            return "play"
-        elif self.exit.collidepoint(pos):
-            return "quit"
-        else:
-            return False
+    def play_music(self):
+        """Toca a música de vitória"""
+        pg.mixer.music.stop()
+        pg.mixer.music.load(self.music)
+        pg.mixer.music.play(-1)
 
 class Font():
     """
@@ -134,17 +154,16 @@ class Camera:
     """
     Classe principal para display do jogo
     Realiza o algoritmo de raycast de paredes e sprites
-    Desenha a hud também
     """
     def __init__(self, size, sprites):
-        self.font = Font('./sprites/font.png')
         self.size = size
+        self.font = Font('./sprites/font.png')
         self.surface = pg.Surface(size)
         self.sprites = sprites
         self.middle = None
         self.zbuffer = []
 
-    def draw_hud(self, player):
+    def hud(self, player):
         """
         Desenha a hud com base nas informações do player
         Os cálculos são apenas para a centralização
@@ -162,16 +181,10 @@ class Camera:
             (w - len(ammo) * self.font.space_width - 10, h - (self.font.height + 10))
         )
         # Viewmodel
-        self.draw_weapon(player)
-
-    def draw_weapon(self, player):
-        """Atualiza os frames do player, e desenha o sprite da arma"""
         sprite, player.weapon_frame = self.sprites[player.weapon].next(
             player.state, player.weapon_frame
         )
-        w, h = self.size
         sw, sh = sprite.get_size()
-
         self.surface.blit(
             sprite,
             (
@@ -343,10 +356,13 @@ class Camera:
             transform_x = inv_det * (player.dy * sprite_x - player.dx * sprite_y)
             transform_y = inv_det * (-player.py * sprite_x + player.px * sprite_y)
 
+            if transform_y == 0:
+                transform_y = 0.1
+
             sprite_screen_x = int((w/2) * (1 + transform_x / transform_y))
 
             # Limite para não deixar o jogo lento
-            sprite_height = min(abs(int(h / transform_y)), 500)
+            sprite_height = abs(int(h / transform_y))
 
             draw_start_y = int(-sprite_height/2 + h/2)
             draw_end_y = int(sprite_height/2 + h/2)
@@ -355,7 +371,7 @@ class Camera:
             sprite_width = min(abs(int(h / transform_y)), 500)
             draw_start_x = int(-sprite_width/2 + sprite_screen_x)
             draw_end_x = int(sprite_width/2 + sprite_screen_x)
-            
+
             if (
                 draw_start_x < w/2 < draw_end_x and
                 0 < transform_y < self.zbuffer[int(w/2)] and

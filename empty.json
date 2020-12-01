@@ -1,0 +1,35 @@
+{
+    "sounds": {
+        "gunshot": "./sound/gunshot.wav",
+        "health": "./sound/health.wav",
+        "ammo": "./sound/ammo.wav",
+        "damage": "./sound/damage.wav"
+    },
+    "music": {
+        "victory": "./sound/victory.wav"
+    },
+    "sprites": {
+        "enemy": ["./sprites/enemy.png", 64, {
+            "idle": [1],
+            "run": [5,5,5,5],
+            "attack": [2,2,2,2,2,2],
+            "shot_1": [10],
+            "shot_2": [10],
+            "die": [5,5,5,5,80]
+        }, 1],
+        "boss": ["./sprites/boss.png", 64, {
+            "idle": [1],
+            "run": [5,5,5,5],
+            "attack": [10,10],
+            "shot": [10],
+            "die": [5,5,5,80]
+        }, 1],
+        "pistol": ["./sprites/pistol.png", 32, {
+            "idle": [1],
+            "shoot": [5,5,5,5,5]
+        }, 5],
+        "walls": ["./sprites/walls.png", 64, 9],
+        "items": ["./sprites/items.png", 64, ["health", "ammo"]]
+    },
+    "levels": []
+}
