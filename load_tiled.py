@@ -21,8 +21,8 @@ for name in os.listdir('./tiled'):
         level = {
             "music": "./sound/music.wav",
             "colors": {
-                "floor": [75 // level_count,5,5],
-                "ceil": [135 // level_count,5,5],
+                "floor": [0, 0, 80 // level_count],
+                "ceil": [0, 100 // level_count, 0],
                 "dark": level_count % 5 == 0
             },
             "map": [],

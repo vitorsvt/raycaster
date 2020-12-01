@@ -3,7 +3,8 @@
         "gunshot": "./sound/gunshot.wav",
         "health": "./sound/health.wav",
         "ammo": "./sound/ammo.wav",
-        "damage": "./sound/damage.wav"
+        "damage": "./sound/damage.wav",
+        "hit": "./sound/hit.wav"
     },
     "music": {
         "victory": "./sound/victory.wav"

@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<map version="1.4" tiledversion="1.4.3" orientation="orthogonal" renderorder="right-down" width="12" height="24" tilewidth="64" tileheight="64" infinite="0" nextlayerid="3" nextobjectid="10">
+ <tileset firstgid="1" name="walls" tilewidth="64" tileheight="64" tilecount="10" columns="10">
+  <image source="../sprites/walls.png" width="640" height="64"/>
+ </tileset>
+ <layer id="1" name="Tile Layer 1" width="12" height="24">
+  <data encoding="csv">
+3,3,3,3,3,3,3,3,3,3,3,3,
+3,0,0,0,0,0,0,0,0,0,0,3,
+3,0,0,0,0,0,0,0,0,0,0,3,
+3,0,6,6,6,6,6,6,6,6,0,3,
+3,0,0,0,0,0,0,0,0,0,0,3,
+3,0,0,0,0,0,0,0,0,0,0,3,
+3,0,0,0,0,0,0,0,0,0,0,3,
+3,0,5,0,0,0,0,0,0,5,0,3,
+3,0,5,0,0,0,0,0,0,5,0,3,
+3,8,5,5,5,0,0,5,5,5,0,3,
+3,0,0,0,0,0,0,0,0,0,0,3,
+3,0,0,0,0,0,0,0,0,0,0,3,
+3,0,0,0,0,0,0,5,5,5,5,3,
+3,0,0,0,0,0,0,0,0,0,0,3,
+3,0,0,0,0,0,0,0,0,0,0,3,
+3,0,0,0,0,0,0,0,0,0,0,3,
+3,0,0,0,0,0,0,0,0,0,0,3,
+3,5,5,5,5,5,5,0,0,0,0,3,
+3,0,0,0,0,0,0,0,0,0,0,3,
+3,0,0,0,0,0,0,0,0,0,0,3,
+3,0,0,0,0,0,0,0,0,0,0,3,
+3,0,0,0,0,0,0,0,0,0,0,3,
+3,0,0,0,0,0,0,0,0,0,0,3,
+3,3,3,3,3,3,3,3,3,3,3,3
+</data>
+ </layer>
+ <objectgroup id="2" name="Object Layer 1">
+  <object id="1" name="player" x="128" y="1408">
+   <point/>
+  </object>
+  <object id="2" name="health" x="384" y="1216">
+   <point/>
+  </object>
+  <object id="3" name="enemy" x="576" y="704">
+   <point/>
+  </object>
+  <object id="4" name="enemy" x="128" y="384">
+   <point/>
+  </object>
+  <object id="5" name="enemy" x="576" y="384">
+   <point/>
+  </object>
+  <object id="6" name="enemy" x="320" y="384">
+   <point/>
+  </object>
+  <object id="7" name="enemy" x="448" y="128">
+   <point/>
+  </object>
+  <object id="8" name="enemy" x="192" y="128">
+   <point/>
+  </object>
+  <object id="9" name="enemy" x="192" y="704">
+   <point/>
+  </object>
+ </objectgroup>
+</map>

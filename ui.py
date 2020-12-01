@@ -158,6 +158,7 @@ class Camera:
     def __init__(self, size, sprites):
         self.size = size
         self.font = Font('./sprites/font.png')
+        self.hit = pg.image.load('./sprites/hit.png')
         self.surface = pg.Surface(size)
         self.sprites = sprites
         self.middle = None
@@ -169,6 +170,9 @@ class Camera:
         Os cálculos são apenas para a centralização
         """
         w, h = self.size
+        # Hit screen
+        if player.delay["hit"] > 15:
+            self.surface.blit(self.hit, (0,0))
         # Health
         self.font.render(self.surface, 'HEALTH', (10, h - 2*(self.font.height + 10)))
         self.font.render(self.surface, str(player.health) + "%", (10, h - (self.font.height + 10)))

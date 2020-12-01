@@ -27,7 +27,10 @@ class Player:
         self.offy = 0
         self.offy_inc = 1
         # Delay para cada tiro
-        self.shoot_delay = 0
+        self.delay = {
+            "shoot": 0,
+            "hit": 0
+        }
         # O frame de animação da arma e o estado do jogador
         self.weapon_frame = 0
         self.weapon = 'pistol'
@@ -56,10 +59,12 @@ class Player:
                 self.offy -= abs(self.offy_inc)
             elif self.offy < 0:
                 self.offy += abs(self.offy_inc)
-        if self.shoot_delay == 0 and self.state == 'shoot':
+        if self.delay["shoot"] == 0 and self.state == 'shoot':
             self.state = 'idle'
-        elif self.shoot_delay > 0:
-            self.shoot_delay -= 1
+        elif self.delay["shoot"] > 0:
+            self.delay["shoot"] -= 1
+        if self.delay["hit"] > 0:
+            self.delay["hit"] -= 1
 
     def move(self, game, tiles, middle, dt):
         """
@@ -116,16 +121,19 @@ class Player:
 
     def damage(self, damage):
         """Dá dano ao player"""
-        self.health -= damage
+        if self.delay["hit"] == 0:
+            self.health -= damage
+            self.delay["hit"] = 30
+            self.sounds.play('hit')
 
     def shoot(self, target):
         """Atira, e testa se acertou alguém"""
-        if self.shoot_delay == 0 and self.ammo > 0:
+        if self.delay["shoot"] == 0 and self.ammo > 0:
             self.sounds.play('gunshot')
             if target is not None and target.health > 0: # Se temos alvo e ele não está morto
                 target.damage(50)
                 self.sounds.play('damage')
-            self.shoot_delay = 25
+            self.delay["shoot"] = 25
             self.state = 'shoot'
             self.ammo -= 1
 
