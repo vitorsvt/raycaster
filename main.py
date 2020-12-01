@@ -7,7 +7,7 @@ from game import Game
 def main():
     """Inicializa a classe do jogo e realiza o loop principal"""
     game = Game((720, 480))
-    player, camera, menu, loading = game.load('game.json')
+    player, camera, menu, loading, victory = game.load('game.json')
     level = game.state.level
     level.play_music()
     level.respawn(player)
@@ -19,7 +19,7 @@ def main():
             camera.spritecast(level, player)
             camera.draw_hud(player)
             player.move(game, level.map, camera.middle, dt)
-            player.update(game)
+            player.update()
             level.update(player, game, dt)
             game.update(camera.surface, 60) # Desenha tudo
         elif game.state.current == "menu": # Se estiver pausado / menu
@@ -38,6 +38,14 @@ def main():
             else:
                 game.state.loading -= 1
             game.update(loading.surface, 60) # Desenha tudo
+        elif game.state.current == "victory":
+            victory.draw()
+            if victory.timer == 300:
+                victory.play_music()
+            victory.timer -= 1
+            if victory.timer <= 0:
+                tools.end()
+            game.update(victory.surface, 60) # Desenha tudo
 
         for event in pg.event.get():
             # Atualiza os inputs

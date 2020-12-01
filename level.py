@@ -19,7 +19,7 @@ class Level:
         self.music = data["music"]
         # Inimigos e itens
         self.entities = [
-            Enemy(pos, sprites["enemy"]) for pos in data["enemies"]
+            Enemy(pos, sprites[enemy], enemy == "boss") for enemy, pos in data["enemies"]
         ] + [
             Item(pos, sprites["items"].sprites[item], item) for item, pos in data["items"]
         ]

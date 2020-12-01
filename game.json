@@ -5,6 +5,9 @@
         "ammo": "./sound/ammo.wav",
         "damage": "./sound/damage.wav"
     },
+    "music": {
+        "victory": "./sound/victory.wav"
+    },
     "sprites": {
         "enemy": ["./sprites/enemy.png", 64, {
             "idle": [1],
@@ -36,7 +39,7 @@
                 "dark": false
             },
             "enemies": [
-                [10, 8], [10, 5], [10, 2], [10, 3]
+                ["enemy", [10, 8]], ["enemy", [10, 5]], ["enemy", [10, 2]], ["enemy", [10, 3]]
             ],
             "items": [
                 ["health", [5,5]], ["ammo", [10,10]]
@@ -65,7 +68,7 @@
                 "dark": false
             },
             "enemies": [
-                [10, 8], [10, 5], [10, 2], [10, 3]
+                ["enemy", [10, 8]], ["enemy", [10, 5]], ["enemy", [10, 2]], ["boss", [10, 3]]
             ],
             "items": [
                 ["health", [5,5]], ["ammo", [10,10]]

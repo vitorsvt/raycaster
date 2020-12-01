@@ -6,7 +6,7 @@ import pygame as pg
 import tools
 from loaders import Sound, Spritesheet, AnimatedSpritesheet
 from entities import Player
-from ui import Menu, Camera, Loading
+from ui import Menu, Camera, Loading, Victory
 from level import Level
 
 class State:
@@ -25,8 +25,7 @@ class State:
         if self.current != "loading":
             self.level = next(self.levels, False)
             if not self.level:
-                print('Você ganhou!')
-                tools.end()
+                self.change_state("victory")
             else:
                 self.change_state("loading")
         else:
@@ -97,8 +96,9 @@ class Game:
         camera = Camera(surface, sprites)
         loading = Loading(surface)
         menu = Menu(surface)
+        victory = Victory(surface, data["music"]["victory"])
         player = Player(sounds)
-        return player, camera, menu, loading
+        return player, camera, menu, loading, victory
 
     def update(self, surface, framerate):
         """

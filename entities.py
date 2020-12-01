@@ -35,16 +35,15 @@ class Player:
         # Objeto de Sounds
         self.sounds = sounds
 
-    def update(self, game):
+    def update(self):
         """Atualiza algumas informações periódicas do player"""
         if self.health <= 0:
             print('Você morreu...')
-            game.quit()
+            tools.end()
         if self.moving:
             self.offx += self.offx_inc
             if self.offx > 10 or self.offx < -10:
                 self.offx_inc = -self.offx_inc
-            
             self.offy += self.offy_inc
             if self.offy > 5 or self.offy < -5:
                 self.offy_inc = -self.offy_inc
@@ -53,7 +52,6 @@ class Player:
                 self.offx -= abs(self.offx_inc)
             elif self.offx < 0:
                 self.offx += abs(self.offx_inc)
-
             if self.offy > 0:
                 self.offy -= abs(self.offy_inc)
             elif self.offy < 0:
@@ -156,7 +154,7 @@ class Item:
 
 class Enemy:
     """Classe para armazenar e atualizar um inimigo"""
-    def __init__(self, pos, sprite, health = 100):
+    def __init__(self, pos, sprite, boss):
         # Posição
         self.x, self.y = pos
         # Distância do player
@@ -167,11 +165,15 @@ class Enemy:
         self.frame = 0
         # Algumas informações
         self.type = "enemy"
-        self.health = health
-        self.speed = 1.5
+        self.boss = boss
+        self.health = 100 if not boss else 1000
+        self.attack_value = 25 if not boss else 50
+        self.speed = 2
         # Delay de ações
         self.delay = {
             'attack': 0,
+            'attack_max': 36 if not boss else 40,
+            'attack_idle': 24 if not boss else 20,
             'damage': 0,
             'die': 0
         }
@@ -202,7 +204,7 @@ class Enemy:
         self.health -= damage
         if self.health > 0:
             sprite = random.randint(1, 2) # Temos dois sprites para o dano
-            self.change_state('shot_' + str(sprite))
+            self.change_state(('shot_' + str(sprite)) if not self.boss else 'shot')
             self.delay['damage'] = 10
         elif self.state != 'die':
             self.change_state('die', 80)
@@ -210,10 +212,10 @@ class Enemy:
     def attack(self, player):
         """Ataca o player"""
         if self.delay['attack'] == 0:
-            player.damage(10)
-            self.change_state('attack', 36)
+            player.damage(self.attack_value)
+            self.change_state('attack', self.delay['attack_max'])
             self.frame = 0
-        elif self.delay['attack'] <= 24:
+        elif self.delay['attack'] <= self.delay['attack_idle']:
             self.state = 'idle'
             self.frame = 0
 

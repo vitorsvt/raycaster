@@ -4,6 +4,34 @@ import math
 import pygame as pg
 import tools
 
+class Victory:
+    """Classe para a tela de vitória"""
+    def __init__(self, size, music):
+        self.music = music
+        self.size = size
+        self.surface = pg.Surface(size)
+        self.timer = 300
+
+        self.background = pg.Rect((0,0), size)
+        self.font = Font('./sprites/font.png')
+
+    def play_music(self):
+        """Toca a música de vitória"""
+        pg.mixer.music.stop()
+        pg.mixer.music.load(self.music)
+        pg.mixer.music.play(-1)
+
+    def draw(self):
+        """Desenha na superfície"""
+        word_1 = 'CONGRATULATIONS!'
+        word_2 = 'YOU WON!'
+        self.font.render(self.surface, word_1,
+            (240 - self.font.space_width * len(word_1) // 2, 100)
+        )
+        self.font.render(self.surface, word_2,
+            (240 - self.font.space_width * len(word_2) // 2, 200)
+        )
+
 class Loading:
     """Classe para a tela de carregamento"""
     def __init__(self, size):
