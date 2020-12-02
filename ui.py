@@ -10,7 +10,7 @@ class Interface:
         self.size = size
         self.surface = pg.Surface(size)
         self.font = Font('./sprites/font.png')
-        self.background = pg.Rect((0,0), size)
+        self.background = pg.image.load('./sprites/background.png')
         self.color = (100,0,0)
         self.buttons = {
             'play': pg.Rect(140, 160, 200, 50),
@@ -28,9 +28,9 @@ class Interface:
 
     def menu(self, game):
         """Desenha na superfície"""
-        pg.draw.rect(self.surface, self.color, self.background)
-        pg.draw.rect(self.surface, (50,0,0), self.buttons['play'])
-        pg.draw.rect(self.surface, (50,0,0), self.buttons['quit'])
+        self.surface.blit(self.background, (0,0))
+        pg.draw.rect(self.surface, (50,50,100), self.buttons['play'])
+        pg.draw.rect(self.surface, (50,50,100), self.buttons['quit'])
         self.font.render(self.surface, 'THE LEGEND OF',
             (240 - self.font.space_width * 6.5, 50 - self.font.height / 2)
         )
@@ -61,7 +61,7 @@ class Interface:
 
     def loading(self, game, player):
         """Desenha a tela de carregamento"""
-        pg.draw.rect(self.surface, self.color, self.background)
+        self.surface.blit(self.background, (0,0))
         self.font.render(self.surface, 'LOADING NEW AREA',
             (240 - self.font.space_width * 8, 160)
         )
@@ -77,7 +77,7 @@ class Interface:
 
     def victory(self, game):
         """Desenha a tela de vitória"""
-        pg.draw.rect(self.surface, self.color, self.background)
+        self.surface.blit(self.background, (0,0))
         word_1 = 'CONGRATULATIONS!'
         word_2 = 'YOU WON!'
         self.font.render(self.surface, word_1,
@@ -99,7 +99,7 @@ class Interface:
 
     def defeat(self, game):
         """Desenha a tela de derrota"""
-        pg.draw.rect(self.surface, self.color, self.background)
+        self.surface.blit(self.background, (0,0))
         word_1 = 'YOU FAILED!'
         self.font.render(self.surface, word_1,
             (240 - self.font.space_width * len(word_1) / 2, 140)
