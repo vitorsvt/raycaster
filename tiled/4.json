@@ -1,20 +1,12 @@
 { "compressionlevel":-1,
- "editorsettings":
-    {
-     "export":
-        {
-         "format":"json",
-         "target":"1.json"
-        }
-    },
  "height":12,
  "infinite":false,
  "layers":[
         {
-         "data":[1, 1, 1, 1, 6, 6, 6, 6, 1, 1, 1, 1, 7, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 7, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 7, 0, 3, 3, 3, 0, 0, 4, 4, 4, 0, 7, 1, 0, 0, 0, 3, 0, 0, 4, 0, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 7, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 7, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 7, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 7, 1, 1, 1, 1, 6, 6, 6, 6, 1, 1, 1, 1],
+         "data":[0, 0, 0, 2, 2, 2, 2, 2, 2, 0, 0, 0, 0, 0, 2, 0, 0, 0, 0, 0, 0, 2, 0, 0, 0, 2, 0, 0, 0, 0, 0, 0, 0, 0, 2, 0, 2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 2, 2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 2, 2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 2, 2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 2, 2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 2, 2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 2, 0, 2, 0, 0, 0, 0, 0, 0, 0, 0, 2, 0, 0, 0, 2, 0, 0, 0, 0, 0, 0, 2, 0, 0, 0, 0, 0, 1, 6, 1, 1, 7, 1, 0, 0, 0],
          "height":12,
          "id":1,
-         "name":"walls",
+         "name":"Tile Layer 1",
          "opacity":1,
          "type":"tilelayer",
          "visible":true,
@@ -25,23 +17,35 @@
         {
          "draworder":"topdown",
          "id":2,
-         "name":"objects",
+         "name":"Object Layer 1",
          "objects":[
                 {
                  "height":0,
-                 "id":11,
-                 "name":"enemy",
+                 "id":1,
+                 "name":"player",
                  "point":true,
                  "rotation":0,
                  "type":"",
                  "visible":true,
                  "width":0,
-                 "x":640,
+                 "x":512,
+                 "y":640
+                }, 
+                {
+                 "height":0,
+                 "id":2,
+                 "name":"",
+                 "point":true,
+                 "rotation":0,
+                 "type":"",
+                 "visible":true,
+                 "width":0,
+                 "x":256,
                  "y":128
                 }, 
                 {
                  "height":0,
-                 "id":12,
+                 "id":3,
                  "name":"enemy",
                  "point":true,
                  "rotation":0,
@@ -53,7 +57,7 @@
                 }, 
                 {
                  "height":0,
-                 "id":13,
+                 "id":4,
                  "name":"enemy",
                  "point":true,
                  "rotation":0,
@@ -65,50 +69,14 @@
                 }, 
                 {
                  "height":0,
-                 "id":14,
-                 "name":"enemy",
-                 "point":true,
-                 "rotation":0,
-                 "type":"",
-                 "visible":true,
-                 "width":0,
-                 "x":128,
-                 "y":128
-                }, 
-                {
-                 "height":0,
-                 "id":23,
-                 "name":"player",
-                 "point":true,
-                 "rotation":0,
-                 "type":"",
-                 "visible":true,
-                 "width":0,
-                 "x":640,
-                 "y":640
-                }, 
-                {
-                 "height":0,
-                 "id":24,
+                 "id":5,
                  "name":"health",
                  "point":true,
                  "rotation":0,
                  "type":"",
                  "visible":true,
                  "width":0,
-                 "x":320,
-                 "y":640
-                }, 
-                {
-                 "height":0,
-                 "id":25,
-                 "name":"ammo",
-                 "point":true,
-                 "rotation":0,
-                 "type":"",
-                 "visible":true,
-                 "width":0,
-                 "x":448,
+                 "x":256,
                  "y":640
                 }],
          "opacity":1,
@@ -118,7 +86,7 @@
          "y":0
         }],
  "nextlayerid":3,
- "nextobjectid":27,
+ "nextobjectid":6,
  "orientation":"orthogonal",
  "renderorder":"right-down",
  "tiledversion":"1.4.3",

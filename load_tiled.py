@@ -13,7 +13,7 @@ with open('empty.json') as f:
 game["levels"] = []
 
 level_count = 0
-for name in os.listdir('./tiled'):
+for name in sorted(os.listdir('./tiled')):
     if name.endswith('.json'):
         level_count += 1
         with open('./tiled/' + name) as f:
@@ -21,8 +21,8 @@ for name in os.listdir('./tiled'):
         level = {
             "music": "./sound/music.wav",
             "colors": {
-                "floor": [0, 0, 80 // level_count],
-                "ceil": [0, 100 // level_count, 0],
+                "floor": [25, 25, 50],
+                "ceil": [50, 50, 100],
                 "dark": level_count % 5 == 0
             },
             "map": [],

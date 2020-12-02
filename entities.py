@@ -254,18 +254,13 @@ class Enemy:
             self.dy = math.sin(self.angle) + self.rand_y
 
             if self.distance < 200:
-                if self.distance >= 1.0:
+                if self.distance >= 0.5:
                     self.change_state('run')
                     new_x = self.x + self.dx * dt * self.speed
                     new_y = self.y + self.dy * dt * self.speed
+                    if tools.collide(tiles, (new_x, self.y)):
+                        self.x = new_x
+                    if tools.collide(tiles, (self.x, new_y)):
+                        self.y = new_y
                 else:
                     self.attack(player)
-                    if self.distance <= 0.5:
-                        new_x = self.x - self.dx * dt * self.speed
-                        new_y = self.y - self.dy * dt * self.speed
-                    else:
-                        new_x = new_y = 0
-                if tools.collide(tiles, (new_x, self.y)):
-                    self.x = new_x
-                if tools.collide(tiles, (self.x, new_y)):
-                    self.y = new_y

@@ -29,7 +29,7 @@
             "idle": [1],
             "shoot": [5,5,5,5,5]
         }, 5],
-        "walls": ["./sprites/walls.png", 64, 9],
+        "walls": ["./sprites/walls.png", 64, 7],
         "items": ["./sprites/items.png", 64, ["health", "ammo"]]
     },
     "levels": []
