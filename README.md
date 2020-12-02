@@ -1,4 +1,4 @@
-# raycaster
+# The Legend of PySlayer
 
 Projeto de um jogo de raycaster baseado no tutorial do [Lodev](https://lodev.org/cgtutor/raycasting.html), utilizando Python e as bibliotecas do PyGame. Desenvolvido para um trabalho da Universidade Federal de Santa Catarina.
 
